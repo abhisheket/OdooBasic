@@ -1,0 +1,17 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hotel_room_manager,hotel.room,model_hotel_room,hotel_management.group_hotel_manager,1,1,1,1
+access_hotel_room_reception,hotel.room,model_hotel_room,hotel_management.group_hotel_reception,1,0,0,0
+access_hotel_facility_manager,hotel.facility,model_hotel_facility,hotel_management.group_hotel_manager,1,1,1,1
+access_hotel_facility_reception,hotel.facility,model_hotel_facility,hotel_management.group_hotel_reception,1,0,0,0
+access_hotel_accommodation_manager,hotel.accommodation,model_hotel_accommodation,hotel_management.group_hotel_manager,1,1,1,1
+access_hotel_accommodation_reception,hotel.accommodation,model_hotel_accommodation,hotel_management.group_hotel_reception,1,1,1,0
+access_hotel_guest_manager,hotel.guest,model_hotel_guest,hotel_management.group_hotel_manager,1,1,1,1
+access_hotel_guest_reception,hotel.guest,model_hotel_guest,hotel_management.group_hotel_reception,1,1,1,0
+access_hotel_food_manager,hotel.food,model_hotel_food,hotel_management.group_hotel_manager,1,1,1,1
+access_hotel_food_reception,hotel.food,model_hotel_food,hotel_management.group_hotel_reception,1,1,0,0
+access_hotel_order_food_manager,hotel.order.food,model_hotel_order_food,hotel_management.group_hotel_manager,1,1,1,1
+access_hotel_order_food_reception,hotel.order.food,model_hotel_order_food,hotel_management.group_hotel_reception,1,1,1,0
+access_hotel_food_category_manager,hotel.food.category,model_hotel_food_category,hotel_management.group_hotel_manager,1,1,1,1
+access_hotel_food_category_reception,hotel.food.category,model_hotel_food_category,hotel_management.group_hotel_reception,1,0,1,0
+access_hotel_order_list_manager,hotel.order.list,model_hotel_order_list,hotel_management.group_hotel_manager,1,1,1,1
+access_hotel_order_list_reception,hotel.order.list,model_hotel_order_list,hotel_management.group_hotel_reception,1,1,1,0

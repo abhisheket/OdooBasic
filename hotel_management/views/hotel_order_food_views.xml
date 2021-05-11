@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Food search view -->
+    <record id="view_hotel_food_search" model="ir.ui.view">
+        <field name="name">hotel.food.search</field>
+        <field name="model">hotel.food</field>
+        <field name="arch" type="xml">
+            <search string="Food Search">
+                <field name="food" string="Food"/>
+                <field name="category_id" string="Category"/>
+                <searchpanel>
+                    <field name="category_id" select="multi" string="Categories" icon="fa-cutlery" color="#875A7B" enable_counters="1"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+    <!-- Food tree view -->
+    <record id="view_hotel_food_list" model="ir.ui.view">
+        <field name="name">hotel.food.list</field>
+        <field name="model">hotel.food</field>
+        <field name="arch" type="xml">
+            <tree string="Food List">
+                <field name="food"/>
+                <field name="category_id"/>
+                <field name="description"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="price" widget="monetary"/>
+            </tree>
+        </field>
+    </record>
+    <!-- Food form view -->
+    <record id="view_hotel_food_form" model="ir.ui.view">
+        <field name="name">hotel.food.form</field>
+        <field name="model">hotel.food</field>
+        <field name="arch" type="xml">
+            <form string="Food Form">
+                <field name="currency_id" invisible="1"/>
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="food" class="oe-edit-only"/>
+                        <h1>
+                            <field name="food"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="category_id" options="{'no_open':True, 'no_create_edit': True, 'no_create': True}"/>
+                            <field name="price" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Order Food tree view -->
+    <record id="view_hotel_order_food_list" model="ir.ui.view">
+        <field name="name">hotel.order.food.list</field>
+        <field name="model">hotel.order.food</field>
+        <field name="arch" type="xml">
+            <tree string="Food Orders">
+                <field name="room_id"/>
+                <field name="guest_id"/>
+                <field name="order_time"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="total"/>
+            </tree>
+        </field>
+    </record>
+    <!-- Order Food form view -->
+    <record id="view_hotel_order_food_form" model="ir.ui.view">
+        <field name="name">hotel.order.food.form</field>
+        <field name="model">hotel.order.food</field>
+        <field name="arch" type="xml">
+            <form string="Guest list">
+                <group>
+                    <group>
+                        <field name="room_id" widget="selection"  domain="[('room_available', '=', False)]"/>
+                        <field name="guest_id" readonly="1"/>
+                        <field name="accommodation_id" invisible="1"/>
+                        <field name="order_time"/>
+                        <field name="active_id" invisible="1"/>
+                    </group>
+                    <group/>
+                </group>
+                <notebook>
+                    <page string="Menu">
+                        <group>
+                            <group>
+                                <field name="category_ids" options="{'no_create_edit': True}" widget="many2many_tags"/>
+                            </group>
+                            <group/>
+                        </group>
+                        <div>
+                            <h1>Food Menu</h1>
+                            <field name="food_ids" context="{'active_record_id': active_id}">
+                                <kanban string="Food List" create="0" edit="0" class="o_kanban_mobile">
+                                    <field name="food"/>
+                                    <field name="category_id"/>
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="price" widget="monetary"/>
+                                    <templates readonly="1">
+                                        <t t-name="kanban-box">
+                                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_kanban_record">
+                                                <div class="o_kanban_image_fill_left d-none d-md-block">
+                                                    <field name="image" widget="image" class="oe_avatar"/>
+                                                </div>
+                                                <div class="oe_kanban_details">
+                                                    <div class="o_kanban_record_top">
+                                                        <div class="o_kanban_record_headings">
+                                                            <strong class="o_kanban_record_title">
+                                                                <div>
+                                                                    <div class="float-right">
+                                                                        <field name="price" widget="monetary"/>
+                                                                    </div>
+                                                                    <strong><span t-esc="record.food.value"/></strong>
+                                                                </div>
+                                                            </strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="o_kanban_record_bottom">
+                                                        <ul>
+                                                            <li t-esc="record.category_id.value" class="text-muted"/>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                                <form string="Select Quantity">
+                                    <field name="currency_id" invisible="1"/>
+                                    <div class="d-flex">
+                                        <div class="flex-grow-0 pr-5">
+                                            <field name="image" widget="image" readonly="1"/>
+                                        </div>
+                                        <div class="flex-grow-1 pr-5 pt-4">
+                                            <h2><field name="food" readonly="1" /></h2>
+                                            <h3 class="pt-3"><field name="price" widget="monetary" readonly="1"/></h3>
+                                        </div>
+                                    </div>
+                                    <div class="container mt-3">
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <label for="category_id" class="font-weight-bold"/>
+                                            </div>
+                                            <div class="col-10">
+                                                <field name="category_id" nolabel="1" readonly="1"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <label for="description" class="font-weight-bold"/>
+                                            </div>
+                                            <div class="col-10">
+                                                <field name="description" nolabel="1" readonly="1"/>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <label for="quantity" class="font-weight-bold"/>
+                                            </div>
+                                            <div class="col-4">
+                                                <field name="quantity" nolabel="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <footer>
+                                        <button name="add_to_list" string="Add to List" type="object" class="oe_highlight"/>
+                                        <button string="Cancel" special="cancel"/>
+                                    </footer>
+                                </form>
+                            </field>
+                        </div>
+                    </page>
+                    <page string="Order List">
+                        <field name="order_list_ids">
+                            <tree string="Order list" editable="bottom" create = "0">
+                                <field name="product" readonly="1"/>
+                                <field name="description" readonly="1"/>
+                                <field name="quantity"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="price" widget="monetary" readonly="1"/>
+                                <field name="subtotal" widget="monetary" readonly="1"/>
+                            </tree>
+                        </field>
+                        <group class="row oe_right" name="total_price">
+                            <div  class="col-2">
+                                <label for="total" class="font-weight-bold">Total:</label>
+                            </div>
+                            <div  class="col-2">
+                                <field name="currency_id" invisible="1"/>
+                                <field name="total" class="font-weight-bold" widget="monetary" nolabel="1" readonly="1"/>
+                            </div>
+                        </group>
+                    </page>
+                </notebook>
+            </form>
+        </field>
+    </record>
+    <!-- Food kanban view -->
+    <record id="view_hotel_food_kanban" model="ir.ui.view">
+        <field name="name">hotel.food.kanban</field>
+        <field name="model">hotel.food</field>
+        <field name="arch" type="xml">
+            <kanban string="Food List" create="1" edit="0" class="o_kanban_mobile">
+                <field name="food"/>
+                <field name="category_id"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="price" widget="monetary"/>
+                <field name="description"/>
+                <templates>
+                   <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_kanban_record">
+                            <div class="o_kanban_image_fill_left d-none d-md-block">
+                                <field name="image" widget="image" class="oe_avatar"/>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <div>
+                                                <div class="float-right">
+                                                    <field name="price" widget="monetary"/>
+                                                </div>
+                                                <strong><span t-esc="record.food.value"/></strong>
+                                            </div>
+                                        </strong>
+                                        <span class="o_kanban_record_subtitle"><span t-esc="record.category_id.value"/></span>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <ul>
+                                        <li t-esc="record.description.value" class="text-muted"/>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <!-- Food Category tree view -->
+    <record id="view_hotel_food_category_list" model="ir.ui.view">
+        <field name="name">hotel.food.category.list</field>
+        <field name="model">hotel.food.category</field>
+        <field name="arch" type="xml">
+            <tree string="Food Category List"  editable="bottom">
+                <field name="food_category"/>
+            </tree>
+        </field>
+    </record>
+    <!-- Order Food window action -->
+    <record id="hotel_order_food_window_action" model="ir.actions.act_window">
+        <field name="name">Order Food</field>
+        <field name="res_model">hotel.order.food</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add a new order</p>
+        </field>
+    </record>
+    <!-- Food window action -->
+    <record id="hotel_food_window_action" model="ir.actions.act_window">
+        <field name="name">Food</field>
+        <field name="res_model">hotel.food</field>
+        <field name="view_mode">kanban,tree,form</field>
+    </record>
+    <!-- Food Category window action -->
+    <record id="hotel_food_category_window_action" model="ir.actions.act_window">
+        <field name="name">Food Category</field>
+        <field name="res_model">hotel.food.category</field>
+        <field name="view_mode">tree</field>
+    </record>
+    <!-- Order Food menu -->
+    <menuitem id="hotel_order_food_menu" name="Order Food" parent="main_hotel_management_menu"/>
+    <!-- Order, Food and Food Category menu -->
+    <menuitem id="hotel_order_menu" name="Order" parent="hotel_order_food_menu"  action="hotel_order_food_window_action"/>
+    <menuitem id="hotel_food_menu" name="Food" parent="hotel_order_food_menu" action="hotel_food_window_action"/>
+    <menuitem id="hotel_food_category_menu" name="Food Category" parent="hotel_order_food_menu" action="hotel_food_category_window_action"/>
+</odoo>
