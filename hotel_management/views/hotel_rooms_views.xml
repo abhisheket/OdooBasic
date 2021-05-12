@@ -8,7 +8,7 @@
             <tree string="Room list">
                 <field name="room_number"/>
                 <field name="bed"/>
-                <field name="facility_ids"/>
+                <field name="facility_ids" widget="many2many_tags"/>
                 <field name="currency_id" invisible="1"/>
                 <field name="rent" widget="monetary"/>
             </tree>

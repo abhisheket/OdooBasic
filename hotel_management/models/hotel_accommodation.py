@@ -46,7 +46,7 @@ class HotelAccommodation(models.Model):
                             compute='_compute_total', store=True)
     invoice_count = fields.Integer(string='Invoice Count', readonly=True,
                                    default=0)
-    payment_status = fields.Boolean(string='Payment Status',  default=False,
+    payment_status = fields.Boolean(string='Payment Status', default=False,
                                     compute='_compute_payment_status')
 
     @api.model
@@ -118,6 +118,12 @@ class HotelAccommodation(models.Model):
             self.payment_line_ids = payment_line
 
     def action_cancel(self):
+        if self.invoice_count:
+            raise exceptions.UserError(
+                "You can't cancel an entry once invoice is created")
+        elif len(self.payment_line_ids) > 1:
+            raise exceptions.UserError(
+                "You can't cancel an entry once order is created")
         self.state = "cancel"
         self.env['hotel.room'].search(
             [('id', '=', self.room_number_id.id)]).write(
@@ -125,7 +131,6 @@ class HotelAccommodation(models.Model):
         self.check_in = False
         self.check_out = False
         self.expected_date = False
-        self.invoice_count = 0
 
     def action_reset_to_draft(self):
         self.state = "draft"
@@ -166,7 +171,6 @@ class HotelAccommodation(models.Model):
                     'price_subtotal': record.subtotal,
                 }))
             invoice = self.env['account.move'].create({
-                # 'ref': self.name,
                 'move_type': 'out_invoice',
                 'currency_id': self.currency_id.id,
                 'invoice_user_id': self.env.uid,
@@ -186,12 +190,16 @@ class HotelAccommodation(models.Model):
             {'room_available': True})
         self.create_invoice()
         self.invoice_count = 1
-        action = self.env["ir.actions.actions"]._for_xml_id(
-            "account.action_move_out_invoice_type")
-        action['views'] = [(self.env.ref('account.view_move_form').id, 'form')]
-        action['res_id'] = self.env['account.move'].search(
-            [('invoice_origin', '=', self.name)]).id
-        return action
+        return {
+            'name': 'Invoice',
+            'view_mode': 'form',
+            'views': [[self.env.ref('account.view_move_form').id, 'form']],
+            'res_model': 'account.move',
+            'res_id': self.env['account.move'].search(
+                [('invoice_origin', '=', self.name)]).id,
+            'type': 'ir.actions.act_window',
+            'target': 'next',
+        }
 
     def action_view_invoice(self):
         action = self.env["ir.actions.actions"]._for_xml_id(

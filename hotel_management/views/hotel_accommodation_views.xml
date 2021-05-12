@@ -35,7 +35,7 @@
                 <sheet>
                     <field name="payment_status" invisible="1"/>
                     <div class="oe_button_box" name="button_box">
-                        <button name="action_view_invoice" type="object" class="oe_stat_button" icon="fa-pencil-square-o" attrs="{'invisible': [('state', '!=', 'check-out')]}">
+                        <button name="action_view_invoice" type="object" class="oe_stat_button" icon="fa-pencil-square-o" states="check-out">
                             <field name="invoice_count" widget="statinfo" string="Invoices"/>
                         </button>
                     </div>
@@ -71,14 +71,14 @@
                             </field>
                         </page>
                         <page string="Payment">
-                            <field name="payment_line_ids">
+                            <field name="payment_line_ids" readonly="1">
                                 <tree string="Payment" editable="bottom" create="0">
-                                    <field name="product" string="Description" readonly="1"/>
-                                    <field name="quantity" string="Quantity" readonly="1"/>
-                                    <field name="uom_id" readonly="1"/>
+                                    <field name="product" string="Description"/>
+                                    <field name="quantity" string="Quantity"/>
+                                    <field name="uom_id"/>
                                     <field name="currency_id" invisible="1"/>
-                                    <field name="price" string="Unit Price" widget="monetary" readonly="1"/>
-                                    <field name="subtotal" string="Subtotal" widget="monetary" readonly="1"/>
+                                    <field name="price" string="Unit Price" widget="monetary"/>
+                                    <field name="subtotal" string="Subtotal" widget="monetary"/>
                                 </tree>
                             </field>
                             <group class="row oe_right" name="payment_total">

@@ -19,7 +19,9 @@ class HotelOrderFood(models.Model):
                                  default=lambda self: fields.datetime.now())
     category_ids = fields.Many2many('hotel.food.category', store=False,
                                     string="Food Category")
-    food_ids = fields.Many2many('hotel.food', required=True, string="Food List")
+    food_ids = fields.Many2many(
+        'hotel.food', string="Food List", store=False,
+        default=lambda self: self.env['hotel.food'].search([]).ids)
     currency_id = fields.Many2one(
         'res.currency', string='Currency', required=True,
         default=lambda self: self.env.user.company_id.currency_id.id)
@@ -84,6 +86,13 @@ class HotelFood(models.Model):
     price = fields.Monetary(string='Price', currency_field='currency_id')
     quantity = fields.Integer(string='Quantity', required=True, default=0)
     description = fields.Text(string='Description', required=True)
+
+    def reduce_quantity(self):
+        if self.quantity > 0:
+            self.quantity -= 1
+
+    def add_quantity(self):
+        self.quantity += 1
 
     def add_to_list(self):
         if self.quantity < 1:
