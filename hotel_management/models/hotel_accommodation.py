@@ -60,9 +60,8 @@ class HotelAccommodation(models.Model):
     @api.depends('expected_day', 'check_in')
     def _compute_expected_date(self):
         for record in self:
-            if not record.check_in:
-                pass
-            else:
+            record.expected_date = False
+            if record.check_in:
                 record.expected_date = date_utils.add(record.check_in,
                                                       days=record.expected_day)
 
