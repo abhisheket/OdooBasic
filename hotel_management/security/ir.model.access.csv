@@ -15,3 +15,4 @@ access_hotel_food_category_manager,hotel.food.category,model_hotel_food_category
 access_hotel_food_category_reception,hotel.food.category,model_hotel_food_category,hotel_management.group_hotel_reception,1,0,1,0
 access_hotel_order_list_manager,hotel.order.list,model_hotel_order_list,hotel_management.group_hotel_manager,1,1,1,1
 access_hotel_order_list_reception,hotel.order.list,model_hotel_order_list,hotel_management.group_hotel_reception,1,1,1,0
+access_hotel_report,hotel.report,model_hotel_report,base.group_user,1,1,1,1

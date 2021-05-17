@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Report action -->
+    <data>
+        <record id="hotel_management_action_report" model="ir.actions.report">
+            <field name="name">Hotel Management Report</field>
+            <field name="model">hotel.report</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">hotel_management.report_hotel</field>
+            <field name="report_file">hotel_management.report_hotel</field>
+            <field name="print_report_name">'Hotel Management</field>
+<!--             - %s - Seats %s' % (object.name, object.seats)-->
+        </record>
+    </data>
+    <!-- Report menu -->
+    <menuitem id="hotel_management_report_menu" name="Hotel Management Report" parent="main_hotel_management_menu"/>
+    <menuitem id="hotel_management_report_sub_menu" name="Hotel Management Report" parent="hotel_management_report_menu" action="hotel_management_action_report"/>
+</odoo>

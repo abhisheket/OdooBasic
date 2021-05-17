@@ -27,5 +27,7 @@
         'views/hotel_rooms_views.xml',
         'views/hotel_accommodation_views.xml',
         'views/hotel_order_food_views.xml',
+        'report/hotel_management_report_views.xml',
+        'wizard/filter_hotel_report_views.xml',
     ],
 }
