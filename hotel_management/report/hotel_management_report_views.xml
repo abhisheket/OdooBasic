@@ -4,15 +4,58 @@
     <data>
         <record id="hotel_management_action_report" model="ir.actions.report">
             <field name="name">Hotel Management Report</field>
-            <field name="model">hotel.report</field>
-            <field name="report_type">qweb-pdf</field>
+            <field name="model">report.hotel_management.report_hotel</field>
+            <field name="report_type">qweb-html</field>
             <field name="report_name">hotel_management.report_hotel</field>
             <field name="report_file">hotel_management.report_hotel</field>
-            <field name="print_report_name">'Hotel Management</field>
-<!--             - %s - Seats %s' % (object.name, object.seats)-->
+            <field name="print_report_name">'Hotel Management Report'</field>
         </record>
     </data>
+    <!-- Report template -->
+    <template id="report_hotel">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h2>Hotel Management Report</h2>
+                    <div class="row mt32 mb32">
+                        <div class="col-3">
+                            <strong>Date from:</strong>
+                            <p t-esc="data['from_date']"/>
+                        </div>
+                        <div class="col-3">
+                            <strong>Date to:</strong>
+                            <p t-esc="data['to_date']"/>
+                        </div>
+                        <div class="col-6">
+                            <strong>Guest name:</strong>
+                            <p t-esc="data['guest_name']"/>
+                        </div>
+                    </div>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>SL.No</th>
+                                    <th>Guest</th>
+                                    <th>Check-In</th>
+                                    <th>Check-Out</th>
+                                    <th>State</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+<!--                                <tr t-foreach="o.expense_line_ids" t-as="line">-->
+<!--                                    <td><span t-field="line.date"/></td>-->
+<!--                                    <td><span t-field="line.date"/></td>-->
+<!--                                    <td><span t-field="line.date"/></td>-->
+<!--                                    <td><span t-field="line.date"/></td>-->
+<!--                                    <td><span t-field="line.date"/></td>-->
+<!--                                </tr>-->
+                            </tbody>
+                        </table>
+                </div>
+            </t>
+        </t>
+    </template>
     <!-- Report menu -->
     <menuitem id="hotel_management_report_menu" name="Hotel Management Report" parent="main_hotel_management_menu"/>
-    <menuitem id="hotel_management_report_sub_menu" name="Hotel Management Report" parent="hotel_management_report_menu" action="hotel_management_action_report"/>
+    <menuitem id="hotel_management_report_sub_menu" name="Hotel Management Report" parent="hotel_management_report_menu" action="hotel_report_filter_window_action"/>
 </odoo>

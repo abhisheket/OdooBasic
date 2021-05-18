@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models, api, exceptions
+from odoo import api, exceptions, fields, models
 
 
 class HotelOrderFood(models.Model):

@@ -6,11 +6,12 @@
         <field name="arch" type="xml">
             <form string="Select Date Range and Guest">
                 <group>
-                    <field name="from_date" />
-                    <field name="to_date" />
-                    <field name="guest_name_id" />
+                    <group>
+                        <field name="from_date" />
+                        <field name="to_date" />
+                        <field name="guest_id" />
+                    </group>
                 </group>
-                <group />
                 <footer>
                     <button name="action_print_report" string="Print Report" type="object" class="oe_highlight"/>
                     <button string="Cancel" special="cancel"/>
