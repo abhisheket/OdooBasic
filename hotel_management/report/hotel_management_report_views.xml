@@ -8,7 +8,7 @@
             <field name="report_type">qweb-html</field>
             <field name="report_name">hotel_management.report_hotel</field>
             <field name="report_file">hotel_management.report_hotel</field>
-            <field name="print_report_name">'Hotel Management Report'</field>
+            <field name="print_report_name">'Hotel Management Report' </field>
         </record>
     </data>
     <!-- Report template -->
@@ -42,13 +42,14 @@
                                 </tr>
                             </thead>
                             <tbody>
-<!--                                <tr t-foreach="o.expense_line_ids" t-as="line">-->
-<!--                                    <td><span t-field="line.date"/></td>-->
-<!--                                    <td><span t-field="line.date"/></td>-->
-<!--                                    <td><span t-field="line.date"/></td>-->
-<!--                                    <td><span t-field="line.date"/></td>-->
-<!--                                    <td><span t-field="line.date"/></td>-->
-<!--                                </tr>-->
+                                <tr t-foreach="docs" t-as="doc">
+                                    <td><span t-esc="doc[0]"/></td>
+                                    <td><span t-esc="doc[1]"/></td>
+                                    <td><span t-esc="context_timestamp(doc[2]).strftime('%d/%m/%Y %H:%M:%S')"/></td>
+                                    <t t-if="not doc[3]"><td><span t-esc="doc[3]"/></td></t>
+                                    <t t-else=""><td><span t-esc="context_timestamp(doc[3]).strftime('%d/%m/%Y %H:%M:%S')"/></td></t>
+                                    <td><span t-esc="doc[4]"/></td>
+                                </tr>
                             </tbody>
                         </table>
                 </div>

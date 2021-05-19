@@ -9,7 +9,7 @@ class HotelReportFilter(models.TransientModel):
     from_date = fields.Date(string='Date from', required=True)
     to_date = fields.Date(string='Date to', required=True)
     guest_id = fields.Many2one('res.partner', string='Guest name',
-                                    required=True)
+                               required=True)
 
     @api.onchange('from_date', 'to_date')
     def _onchange_date(self):
@@ -23,7 +23,9 @@ class HotelReportFilter(models.TransientModel):
             'guest_id': self.guest_id.id,
             'guest_name': self.guest_id.name,
         }
-        # docids = self.env['sale.order'].search([]).ids
         return self.env.ref(
             'hotel_management.hotel_management_action_report').report_action(
             None, data=data)
+
+    def action_print_xlsx(self):
+        print("Export XLSX")
