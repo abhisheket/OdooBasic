@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from odoo import api, exceptions, fields, models
+from odoo import api, fields, models
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools import date_utils
 
 
@@ -89,10 +90,9 @@ class HotelAccommodation(models.Model):
 
     def action_check_in(self):
         if self.number_of_guest != len(self.guest_list_ids):
-            raise exceptions.ValidationError(
-                "Please provide all guest details")
+            raise ValidationError("Please provide all guest details")
         if not self.message_main_attachment_id.id:
-            raise exceptions.ValidationError("Please attach the Address proof")
+            raise ValidationError("Please attach the Address proof")
         self.state = "check-in"
         self.check_in = fields.Datetime.now()
         self.env['hotel.room'].search(
@@ -118,11 +118,9 @@ class HotelAccommodation(models.Model):
 
     def action_cancel(self):
         if self.invoice_count:
-            raise exceptions.UserError(
-                "You can't cancel an entry once invoice is created")
+            raise UserError("You can't cancel an entry once invoice is created")
         elif len(self.payment_line_ids) > 1:
-            raise exceptions.UserError(
-                "You can't cancel an entry once order is created")
+            raise UserError("You can't cancel an entry once order is created")
         self.state = "cancel"
         self.env['hotel.room'].search(
             [('id', '=', self.room_number_id.id)]).write(

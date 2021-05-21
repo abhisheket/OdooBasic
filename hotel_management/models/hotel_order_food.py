@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import api, exceptions, fields, models
+
+from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class HotelOrderFood(models.Model):
@@ -96,7 +98,7 @@ class HotelFood(models.Model):
 
     def add_to_list(self):
         if self.quantity < 1:
-            raise exceptions.ValidationError("Order minimum 1 quantity")
+            raise ValidationError("Order minimum 1 quantity")
         else:
             active_id = self.env.context['active_record_id']
             orders = self.env['hotel.order.list'].search(
@@ -106,7 +108,7 @@ class HotelFood(models.Model):
                 if record.name_id.id == self.id:
                     existing_item = 1
             if existing_item:
-                raise exceptions.ValidationError("Item Already Added!")
+                raise ValidationError("Item Already Added!")
             else:
                 values = {
                     'name_id': self.id,

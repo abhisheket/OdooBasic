@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <!-- Sequences for accommodation -->
+        <!-- Sequence for accommodation -->
         <record id="accommodation_sequence" model="ir.sequence">
             <field name="name">Accommodation</field>
             <field name="code">hotel.accommodation.sequence</field>

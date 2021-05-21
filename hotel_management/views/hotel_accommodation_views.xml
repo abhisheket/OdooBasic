@@ -6,8 +6,8 @@
         <field name="model">hotel.accommodation</field>
         <field name="arch" type="xml">
             <tree string="Accommodation list" default_order="check_in desc"
-                  decoration-warning="expected_date &gt;= context_today().strftime('%Y-%m-%d 00:00:00') and expected_date &lt;= context_today().strftime('%Y-%m-%d 23:59:59')"
-                  decoration-danger="expected_date &gt;= context_today().strftime('%Y-%m-%d 00:00:00') and expected_date &lt;= context_today().strftime('%Y-%m-%d 23:59:59') and state != 'check-out'">
+                  decoration-warning="expected_date &gt;= (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S') and expected_date &lt; (datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')"
+                  decoration-danger="expected_date &gt;= (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S') and expected_date &lt; (datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S') and state != 'check-out'">
                 <field name="name"/>
                 <field name="guest_id"/>
                 <field name="room_number_id"/>
@@ -23,7 +23,7 @@
         <field name="model">hotel.accommodation</field>
         <field name="arch" type="xml">
             <form string="Accommodation form" >
-                <!--Status bar with buttons and states-->
+                <!-- Status bar with buttons and states -->
                 <header>
                     <button name="action_check_in" type="object" string="Check-In" class="oe_highlight" states="draft"/>
                     <button name="action_check_out" type="object" string="Check-Out" class="oe_highlight" states="check-in"/>
@@ -62,6 +62,7 @@
                     </group>
                     <notebook>
                         <page string="Guest Information">
+                            <!-- Guest list tree view -->
                             <field name="guest_list_ids" attrs="{'readonly': [('state', '!=', 'draft')]}">
                                 <tree string="Guest list" editable="bottom">
                                     <field name="guest_name_id" domain="[('is_company', '=', False)]"/>
@@ -71,6 +72,7 @@
                             </field>
                         </page>
                         <page string="Payment">
+                            <!-- Payment lines tree view -->
                             <field name="payment_line_ids" readonly="1">
                                 <tree string="Payment" editable="bottom" create="0">
                                     <field name="product" string="Description"/>
@@ -92,13 +94,13 @@
                         </page>
                     </notebook>
                 </sheet>
-                <!--Add chatter and followers widget-->
+                <!-- Add chatter and followers widget -->
                 <div class = "oe_chatter" >
-                    <!-- Followers view-->
+                    <!-- Followers view -->
                     <field name = "message_follower_ids" widget = "mail_followers"/>
-                    <!--Activity view-->
+                    <!-- Activity view -->
                     <field name="activity_ids" widget="mail_activity"/>
-                    <!-- Chatter view-->
+                    <!-- Chatter view -->
                     <field name = "message_ids" widget = "mail_thread" />
                 </div>
             </form>
@@ -113,8 +115,8 @@
                 <field name="room_number_id" string="Room"/>
                 <field name="guest_id" string="Guest"/>
                 <field name="name" string="Sequence"/>
-                <filter name="current_day_checkouts_filter" string="Current-day Checkouts" domain="[('expected_date', '&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')), ('expected_date', '&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
-                <filter string="Next-day Checkouts" name="next_day_checkouts_filter" domain = "[('expected_date', '&gt;=', (context_today()+datetime.timedelta(days=1)).strftime('%Y-%m-%d 00:00:00')), ('expected_date', '&lt;=', (context_today()+datetime.timedelta(days=1)).strftime('%Y-%m-%d 23:59:59'))]"/>
+                <filter name="current_day_checkouts_filter" string="Current-day Checkouts" domain="[('expected_date', '&gt;=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')), ('expected_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <filter name="next_day_checkouts_filter" string="Next-day Checkouts" domain = "[('expected_date', '&gt;=', (datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')), ('expected_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=2), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
                 <filter string="Check_In" name="check_in_filter" domain="[('state','=','check-in')]"/>
                 <group>
                     <filter string="Room" name="room_group_filter" context="{'group_by':'room_number_id'}"/>

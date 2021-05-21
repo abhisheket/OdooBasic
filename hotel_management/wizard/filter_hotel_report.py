@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import api, exceptions, fields, models
+
+from odoo import api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class HotelReportFilter(models.TransientModel):
@@ -14,9 +16,9 @@ class HotelReportFilter(models.TransientModel):
     @api.onchange('from_date', 'to_date')
     def _onchange_date(self):
         if self.from_date and self.to_date and self.from_date > self.to_date:
-            raise exceptions.ValidationError("Invalid date range")
+            raise ValidationError("Invalid date range")
 
-    def action_print_report(self):
+    def action_print_report_pdf(self):
         data = {
             'from_date': self.from_date,
             'to_date': self.to_date,
@@ -24,8 +26,9 @@ class HotelReportFilter(models.TransientModel):
             'guest_name': self.guest_id.name,
         }
         return self.env.ref(
-            'hotel_management.hotel_management_action_report').report_action(
+            'hotel_management.hotel_action_report_pdf').report_action(
             None, data=data)
 
-    def action_print_xlsx(self):
-        print("Export XLSX")
+    def action_print_report_xlsx(self):
+        return self.env.ref(
+            'hotel_management.hotel_action_report_xlsx').report_action(self)

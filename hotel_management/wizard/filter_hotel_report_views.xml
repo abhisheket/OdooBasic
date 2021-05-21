@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+    <!-- Report wizard form view -->
     <record id="hotel_report_filter_view_form" model="ir.ui.view">
         <field name="name">hotel.report.filter.form</field>
         <field name="model">hotel.report.filter</field>
@@ -13,17 +14,22 @@
                     </group>
                 </group>
                 <footer>
-                    <button name="action_print_report" string="Print Report" type="object" class="oe_highlight"/>
-                    <button name="action_print_xlsx" string="Export(XLSX)" type="object" class="oe_highlight"/>
+                    <button name="action_print_report_pdf" string="Print PDF Report" type="object" class="oe_highlight"/>
+                    <button name="action_print_report_xlsx" string="Print XLSX Report" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="btn btn-default" special="cancel"/>
                 </footer>
             </form>
         </field>
     </record>
+    <!-- Report wizard action window -->
     <record id="hotel_report_filter_window_action" model="ir.actions.act_window">
         <field name="name">Add Filter to Hotel Report</field>
         <field name="res_model">hotel.report.filter</field>
+        <field name="type">ir.actions.act_window</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
+    <!-- Report menu -->
+    <menuitem id="hotel_management_report_menu" name="Hotel Management Report" parent="main_hotel_management_menu"/>
+    <menuitem id="hotel_management_report_sub_menu" name="Hotel Management Report" parent="hotel_management_report_menu" action="hotel_report_filter_window_action"/>
 </odoo>

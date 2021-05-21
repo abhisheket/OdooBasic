@@ -17,7 +17,7 @@
     'category': 'Test',
     'version': '14.0.1.2.0',
 
-    'depends': ['base', 'mail', 'uom', 'account'],
+    'depends': ['account', 'base', 'mail', 'uom', 'report_xlsx'],
     'license': 'LGPL-3',
 
     'data': [

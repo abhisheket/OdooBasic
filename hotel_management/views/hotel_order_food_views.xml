@@ -56,7 +56,7 @@
             </form>
         </field>
     </record>
-    <!-- Order Food tree view -->
+    <!-- Order food tree view -->
     <record id="view_hotel_order_food_list" model="ir.ui.view">
         <field name="name">hotel.order.food.list</field>
         <field name="model">hotel.order.food</field>
@@ -70,7 +70,7 @@
             </tree>
         </field>
     </record>
-    <!-- Order Food form view -->
+    <!-- Order food form view -->
     <record id="view_hotel_order_food_form" model="ir.ui.view">
         <field name="name">hotel.order.food.form</field>
         <field name="model">hotel.order.food</field>
@@ -97,6 +97,7 @@
                         <div>
                             <h1>Food Menu</h1>
                             <field name="food_ids" context="{'active_record_id': active_id}" readonly="1">
+                                <!-- Order food selection kanban view -->
                                 <kanban string="Food List" create="0" edit="0" class="o_kanban_mobile">
                                     <field name="food"/>
                                     <field name="category_id"/>
@@ -131,6 +132,7 @@
                                         </t>
                                     </templates>
                                 </kanban>
+                                <!-- Order window -->
                                 <form string="Select Quantity">
                                     <field name="currency_id" invisible="1"/>
                                     <div class="d-flex">
@@ -178,6 +180,7 @@
                         </div>
                     </page>
                     <page string="Order List">
+                        <!-- Order list tree view -->
                         <field name="order_list_ids">
                             <tree string="Order list" editable="bottom" create = "0">
                                 <field name="product" readonly="1"/>
@@ -245,7 +248,7 @@
             </kanban>
         </field>
     </record>
-    <!-- Food Category tree view -->
+    <!-- Food category tree view -->
     <record id="view_hotel_food_category_list" model="ir.ui.view">
         <field name="name">hotel.food.category.list</field>
         <field name="model">hotel.food.category</field>
@@ -255,7 +258,7 @@
             </tree>
         </field>
     </record>
-    <!-- Order Food window action -->
+    <!-- Order food window action -->
     <record id="hotel_order_food_window_action" model="ir.actions.act_window">
         <field name="name">Order Food</field>
         <field name="res_model">hotel.order.food</field>
@@ -270,13 +273,13 @@
         <field name="res_model">hotel.food</field>
         <field name="view_mode">kanban,tree,form</field>
     </record>
-    <!-- Food Category window action -->
+    <!-- Food category window action -->
     <record id="hotel_food_category_window_action" model="ir.actions.act_window">
         <field name="name">Food Category</field>
         <field name="res_model">hotel.food.category</field>
         <field name="view_mode">tree</field>
     </record>
-    <!-- Order Food menu -->
+    <!-- Order food menu -->
     <menuitem id="hotel_order_food_menu" name="Order Food" parent="main_hotel_management_menu"/>
     <!-- Order, Food and Food Category menu -->
     <menuitem id="hotel_order_menu" name="Order" parent="hotel_order_food_menu"  action="hotel_order_food_window_action"/>

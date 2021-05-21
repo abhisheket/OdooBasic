@@ -1,33 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <!-- Report action -->
     <data>
-        <record id="hotel_management_action_report" model="ir.actions.report">
+        <!-- PDF report action -->
+        <record id="hotel_action_report_pdf" model="ir.actions.report">
             <field name="name">Hotel Management Report</field>
-            <field name="model">report.hotel_management.report_hotel</field>
-            <field name="report_type">qweb-html</field>
-            <field name="report_name">hotel_management.report_hotel</field>
-            <field name="report_file">hotel_management.report_hotel</field>
-            <field name="print_report_name">'Hotel Management Report' </field>
+            <field name="model">report.hotel_management.report_pdf</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">hotel_management.report_pdf</field>
+            <field name="report_file">hotel_management.report_pdf</field>
+            <field name="print_report_name">'Hotel Management Report'</field>
+        </record>
+        <!-- XLSX report action -->
+        <record id="hotel_action_report_xlsx" model="ir.actions.report">
+            <field name="name">Hotel Management Report XLSX</field>
+            <field name="model">report.hotel_management.report_xlsx</field>
+            <field name="report_type">xlsx</field>
+            <field name="report_name">hotel_management.report_xlsx</field>
+            <field name="report_file">hotel_management.report_xlsx</field>
+            <field name="print_report_name">'Hotel Management Report'</field>
         </record>
     </data>
-    <!-- Report template -->
-    <template id="report_hotel">
+    <!-- PDF report template -->
+    <template id="report_pdf">
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
                 <div class="page">
-                    <h2>Hotel Management Report</h2>
+                    <h2><strong>Hotel Management Report</strong></h2>
                     <div class="row mt32 mb32">
-                        <div class="col-3">
-                            <strong>Date from:</strong>
+                        <div class="col-4">
+                            <strong>Date From:</strong>
                             <p t-esc="data['from_date']"/>
                         </div>
-                        <div class="col-3">
-                            <strong>Date to:</strong>
+                        <div class="col-4">
+                            <strong>Date To:</strong>
                             <p t-esc="data['to_date']"/>
                         </div>
-                        <div class="col-6">
-                            <strong>Guest name:</strong>
+                        <div class="col-4">
+                            <strong>Guest Name:</strong>
                             <p t-esc="data['guest_name']"/>
                         </div>
                     </div>
@@ -56,7 +65,4 @@
             </t>
         </t>
     </template>
-    <!-- Report menu -->
-    <menuitem id="hotel_management_report_menu" name="Hotel Management Report" parent="main_hotel_management_menu"/>
-    <menuitem id="hotel_management_report_sub_menu" name="Hotel Management Report" parent="hotel_management_report_menu" action="hotel_report_filter_window_action"/>
 </odoo>
