@@ -44,7 +44,6 @@
                             <thead>
                                 <tr>
                                     <th>SL.No</th>
-                                    <th>Guest</th>
                                     <th>Check-In</th>
                                     <th>Check-Out</th>
                                     <th>State</th>
@@ -53,11 +52,10 @@
                             <tbody>
                                 <tr t-foreach="docs" t-as="doc">
                                     <td><span t-esc="doc[0]"/></td>
-                                    <td><span t-esc="doc[1]"/></td>
-                                    <td><span t-esc="context_timestamp(doc[2]).strftime('%d/%m/%Y %H:%M:%S')"/></td>
-                                    <t t-if="not doc[3]"><td><span t-esc="doc[3]"/></td></t>
-                                    <t t-else=""><td><span t-esc="context_timestamp(doc[3]).strftime('%d/%m/%Y %H:%M:%S')"/></td></t>
-                                    <td><span t-esc="doc[4]"/></td>
+                                    <td><span t-esc="context_timestamp(doc[1]).strftime('%d/%m/%Y %H:%M:%S')"/></td>
+                                    <t t-if="not doc[2]"><td><span t-esc="doc[2]"/></td></t>
+                                    <t t-else=""><td><span t-esc="context_timestamp(doc[2]).strftime('%d/%m/%Y %H:%M:%S')"/></td></t>
+                                    <td><span t-esc="doc[3]"/></td>
                                 </tr>
                             </tbody>
                         </table>
