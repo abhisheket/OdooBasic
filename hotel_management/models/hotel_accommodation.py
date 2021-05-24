@@ -76,9 +76,9 @@ class HotelAccommodation(models.Model):
                     match_room_facility.append(record.id)
         match_room_bed_type = []
         if self.bed_type:
-            for record in self.env['hotel.room'].search([]):
-                if record.bed == self.bed_type:
-                    match_room_bed_type.append(record.id)
+            for record in self.env['hotel.room'].search(
+                    [('bed', '=', self.bed_type)]):
+                match_room_bed_type.append(record.id)
         if match_room_bed_type and match_room_facility:
             return {'domain': {
                 'room_number_id': [('room_available', '=', True),

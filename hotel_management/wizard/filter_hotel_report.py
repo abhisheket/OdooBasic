@@ -8,10 +8,9 @@ class HotelReportFilter(models.TransientModel):
     _name = "hotel.report.filter"
     _description = "Hotel Management Report Filter"
 
-    from_date = fields.Date(string='Date from', required=True)
-    to_date = fields.Date(string='Date to', required=True)
-    guest_id = fields.Many2one('res.partner', string='Guest name',
-                               required=True)
+    from_date = fields.Date(string='Date from')
+    to_date = fields.Date(string='Date to')
+    guest_id = fields.Many2one('res.partner', string='Guest name')
 
     @api.onchange('from_date', 'to_date')
     def _onchange_date(self):

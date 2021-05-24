@@ -27,23 +27,24 @@
                 <div class="page">
                     <h2><strong>Hotel Management Report</strong></h2>
                     <div class="row mt32 mb32">
-                        <div class="col-4">
+                        <t t-if="data['from_date']"><div class="col-4">
                             <strong>Date From:</strong>
-                            <p t-esc="data['from_date']"/>
-                        </div>
-                        <div class="col-4">
+                                <p t-esc="data['from_date']"/>
+                        </div></t>
+                        <t t-if="data['to_date']"><div class="col-4">
                             <strong>Date To:</strong>
-                            <p t-esc="data['to_date']"/>
-                        </div>
-                        <div class="col-4">
+                                <p t-esc="data['to_date']"/>
+                        </div></t>
+                        <t t-if="data['guest_name']"><div class="col-4">
                             <strong>Guest Name:</strong>
-                            <p t-esc="data['guest_name']"/>
-                        </div>
+                                <p t-esc="data['guest_name']"/>
+                        </div></t>
                     </div>
                         <table class="table table-sm">
                             <thead>
                                 <tr>
                                     <th>SL.No</th>
+                                    <t t-if="not data['guest_name']"><th>Guest</th></t>
                                     <th>Check-In</th>
                                     <th>Check-Out</th>
                                     <th>State</th>
@@ -52,6 +53,7 @@
                             <tbody>
                                 <tr t-foreach="docs" t-as="doc">
                                     <td><span t-esc="doc[0]"/></td>
+                                    <t t-if="not data['guest_name']"><td><span t-esc="doc[4]"/></td></t>
                                     <td><span t-esc="context_timestamp(doc[1]).strftime('%d/%m/%Y %H:%M:%S')"/></td>
                                     <t t-if="not doc[2]"><td><span t-esc="doc[2]"/></td></t>
                                     <t t-else=""><td><span t-esc="context_timestamp(doc[2]).strftime('%d/%m/%Y %H:%M:%S')"/></td></t>
