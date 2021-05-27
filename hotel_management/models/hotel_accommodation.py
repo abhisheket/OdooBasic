@@ -86,7 +86,7 @@ class HotelAccommodation(models.Model):
                                    ('id', 'in', match_room_facility)]}}
         else:
             return {'domain': {'room_number_id': [
-                ('id', 'not in', self.env['hotel.room'].search([]).ids)]}}
+                ('id', '=', False)]}}
 
     def action_check_in(self):
         if self.number_of_guest != len(self.guest_list_ids):
