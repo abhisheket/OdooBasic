@@ -12,12 +12,11 @@
     """,
 
     'author': "Abhishek E T",
-    'website': "http://allwebpages-com.stackstaging.com/",
 
     'category': 'Test',
     'version': '14.0.1.2.0',
 
-    'depends': ['account', 'base', 'mail', 'uom', 'report_xlsx'],
+    'depends': ['account', 'base', 'mail', 'report_xlsx', 'uom'],
     'license': 'LGPL-3',
 
     'data': [

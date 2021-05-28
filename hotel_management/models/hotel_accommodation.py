@@ -199,12 +199,16 @@ class HotelAccommodation(models.Model):
         }
 
     def action_view_invoice(self):
-        action = self.env["ir.actions.actions"]._for_xml_id(
-            "account.action_move_out_invoice_type")
-        action['views'] = [(self.env.ref('account.view_move_form').id, 'form')]
-        action['res_id'] = self.env['account.move'].search(
-            [('invoice_origin', '=', self.name)]).id
-        return action
+        return {
+            'name': 'Invoice',
+            'view_mode': 'form',
+            'views': [[self.env.ref('account.view_move_form').id, 'form']],
+            'res_model': 'account.move',
+            'res_id': self.env['account.move'].search(
+                [('invoice_origin', '=', self.name)]).id,
+            'type': 'ir.actions.act_window',
+            'target': 'next',
+        }
 
     def _compute_payment_status(self):
         for record in self:
