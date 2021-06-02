@@ -17,8 +17,8 @@ class HotelAccommodation(models.Model):
                                string="Guest", required=True)
     number_of_guest = fields.Integer(string='Guests', required=True,
                                      help="Number of guests")
-    check_in = fields.Datetime(string="Check In", readonly=True)
-    check_out = fields.Datetime(string="Check Out", readonly=True)
+    check_in = fields.Datetime(string="Check In", readonly=True, copy=False)
+    check_out = fields.Datetime(string="Check Out", readonly=True, copy=False)
     bed_type = fields.Selection(
         selection=[('single', 'Single'), ('double', 'Double'),
                    ('dormitory', 'Dormitory')], string='Bed Type',
@@ -26,7 +26,7 @@ class HotelAccommodation(models.Model):
     facility_ids = fields.Many2many('hotel.facility', string='Facilities',
                                     required=True)
     room_number_id = fields.Many2one('hotel.room', ondelete='restrict',
-                                     string="Room", required=True)
+                                     string="Room", required=True, copy=False)
     state = fields.Selection(
         selection=[('draft', 'Draft'), ('check-in', 'Check-In'),
                    ('check-out', 'Check-Out'), ('cancel', 'Cancel')],

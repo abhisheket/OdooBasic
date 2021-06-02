@@ -87,43 +87,42 @@ class HotelReportFilter(models.TransientModel):
                         )AS hotel_report)""" % where_clause)
 
     def get_to_date(self):
-        self._cr.execute("""SELECT
+        self._cr.execute("""
+            SELECT COALESCE(
                             CASE 
                                 WHEN (SELECT max(check_in) FROM hotel_report) > 
                                 (SELECT max(check_out) FROM hotel_report) THEN
                                 (SELECT max(check_in) FROM hotel_report)
                                 ELSE (SELECT max(check_out) FROM hotel_report)
-                            END as to_date;""")
+                            END, (SELECT max(check_in) FROM hotel_report))
+                            as to_date;""")
         return self._cr.fetchall()[0][0]
 
     def get_from_date(self):
-        self._cr.execute("""SELECT
-                            CASE 
-                                WHEN (SELECT min(check_in) FROM hotel_report) < 
-                                (SELECT min(check_out) FROM hotel_report) THEN
-                                (SELECT min(check_in) FROM hotel_report)
-                                ELSE (SELECT min(check_out) FROM hotel_report)
-                            END as to_date;""")
+        self._cr.execute("""
+            SELECT COALESCE(
+                CASE 
+                    WHEN (SELECT min(check_in) FROM hotel_report) < 
+                    (SELECT min(check_out) FROM hotel_report) THEN
+                    (SELECT min(check_in) FROM hotel_report)
+                    ELSE (SELECT min(check_out) FROM hotel_report)
+                END,  (SELECT min(check_in) FROM hotel_report))
+                as from_date;""")
         return self._cr.fetchall()[0][0]
 
-    def action_print_report_pdf(self):
-        self.create_report_view()
-        self._cr.execute("SELECT * FROM hotel_report")
-        docs = self._cr.fetchall()
-        if not docs:
-            raise MissingError("Record does not exist or has been deleted.")
+    def get_data(self):
         if not self.from_date:
             from_date = self.get_from_date().astimezone(
                         pytz.timezone(self.env.user.tz)).date()
             if self.to_date:
-                data = {
+                return {
                     'from_date': from_date,
                     'to_date': self.to_date,
                     'guest_id': self.guest_id.id,
                     'guest_name': self.guest_id.name,
                 }
             else:
-                data = {
+                return {
                     'from_date': from_date,
                     'to_date': self.get_to_date().astimezone(
                         pytz.timezone(self.env.user.tz)).date(),
@@ -131,7 +130,7 @@ class HotelReportFilter(models.TransientModel):
                     'guest_name': self.guest_id.name,
                 }
         elif not self.to_date:
-            data = {
+            return {
                 'from_date': self.from_date,
                 'to_date': self.get_to_date().astimezone(
                         pytz.timezone(self.env.user.tz)).date(),
@@ -139,15 +138,22 @@ class HotelReportFilter(models.TransientModel):
                 'guest_name': self.guest_id.name,
             }
         else:
-            data = {
+            return {
                 'from_date': self.from_date,
                 'to_date': self.to_date,
                 'guest_id': self.guest_id.id,
                 'guest_name': self.guest_id.name,
             }
+
+    def action_print_report_pdf(self):
+        self.create_report_view()
+        self._cr.execute("SELECT * FROM hotel_report")
+        docs = self._cr.fetchall()
+        if not docs:
+            raise MissingError("Record does not exist or has been deleted.")
         return self.env.ref(
             'hotel_management.hotel_action_report_pdf').report_action(
-            None, data=data)
+            None, data=self.get_data())
 
     def action_print_report_xlsx(self):
         self.create_report_view()
@@ -155,16 +161,10 @@ class HotelReportFilter(models.TransientModel):
         docs = self._cr.fetchall()
         if not docs:
             raise MissingError("Record does not exist or has been deleted.")
-        data = {
-            'from_date': self.from_date,
-            'to_date': self.to_date,
-            'guest_id': self.guest_id.id,
-            'guest_name': self.guest_id.name,
-        }
         return {
             'type': 'ir.actions.report',
             'data': {'model': 'report.hotel_management.report_xlsx',
-                     'options': json.dumps(data,
+                     'options': json.dumps(self.get_data(),
                                            default=date_utils.json_default),
                      'output_format': 'xlsx',
                      'report_name': 'Hotel Management Report',
