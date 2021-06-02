@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <!-- Rooms tree view -->
-    <record id="view_hotel_room_list" model="ir.ui.view">
+    <record id="hotel_room_view_list" model="ir.ui.view">
         <field name="name">hotel.room.list</field>
         <field name="model">hotel.room</field>
         <field name="arch" type="xml">
-            <tree string="Room list">
+            <tree string="Room List">
                 <field name="room_number"/>
                 <field name="bed"/>
                 <field name="facility_ids" widget="many2many_tags"/>
@@ -15,11 +15,11 @@
         </field>
     </record>
     <!-- Rooms form view -->
-    <record id="view_hotel_room_form" model="ir.ui.view">
+    <record id="hotel_room_view_form" model="ir.ui.view">
         <field name="name">hotel.room.form</field>
         <field name="model">hotel.room</field>
         <field name="arch" type="xml">
-            <form string="Room form">
+            <form string="Room Form">
                 <sheet>
                     <group>
                         <group>
@@ -39,7 +39,7 @@
         </field>
     </record>
     <!-- Rooms search view -->
-    <record id="view_hotel_room_search" model="ir.ui.view">
+    <record id="hotel_room_view_search" model="ir.ui.view">
         <field name="name">hotel.room.search</field>
         <field name="model">hotel.room</field>
         <field name="arch" type="xml">
@@ -53,7 +53,7 @@
         </field>
     </record>
     <!-- Facilities tree view -->
-    <record id="view_hotel_facility_tree" model="ir.ui.view">
+    <record id="hotel_facility_view_tree" model="ir.ui.view">
         <field name="name">hotel.facility.tree</field>
         <field name="model">hotel.facility</field>
         <field name="arch" type="xml">
@@ -63,7 +63,7 @@
         </field>
     </record>
     <!-- Rooms window action -->
-    <record id="hotel_room_list_action" model="ir.actions.act_window">
+    <record id="hotel_room_action" model="ir.actions.act_window">
         <field name="name">Rooms</field>
         <field name="res_model">hotel.room</field>
         <field name="view_mode">tree,form</field>
@@ -72,16 +72,14 @@
         </field>
     </record>
     <!-- Facilities window action -->
-    <record id="hotel_facility_list_action" model="ir.actions.act_window">
+    <record id="hotel_facility_action" model="ir.actions.act_window">
         <field name="name">Facilities</field>
         <field name="res_model">hotel.facility</field>
         <field name="view_mode">tree</field>
     </record>
-    <!-- Main menu -->
-    <menuitem id="main_hotel_management_menu" name="Hotel Room Management"/>
     <!-- Configuration menu and Rooms sub-menu -->
-    <menuitem id="configuration_menu" name="Configuration" parent="main_hotel_management_menu" sequence="100"/>
-    <menuitem id="hotel_room_menu" name="Rooms" parent="configuration_menu" action="hotel_room_list_action"/>
+    <menuitem id="configuration_menu" name="Configuration" parent="hotel_management_menu_root" sequence="100"/>
+    <menuitem id="hotel_room_menu" name="Room" parent="configuration_menu" action="hotel_room_action"/>
     <!-- Facilities menu -->
-    <menuitem id="hotel_facility_menu" name="Facilities" parent="configuration_menu" action="hotel_facility_list_action"/>
+    <menuitem id="hotel_facility_menu" name="Facility" parent="configuration_menu" action="hotel_facility_action"/>
 </odoo>

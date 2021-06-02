@@ -30,7 +30,7 @@ class HotelOrderFood(models.Model):
     total = fields.Monetary(string='Total', currency_field='currency_id',
                             compute='_compute_total', store=True)
     order_list_ids = fields.One2many('hotel.order.list', 'order_list_id',
-                                     string='Order list')
+                                     string='Order List')
     active_id = fields.Integer(string='Active ID', compute='_compute_active_id')
 
     @api.onchange('room_id')

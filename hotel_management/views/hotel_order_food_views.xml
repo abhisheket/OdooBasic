@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <!-- Food search view -->
-    <record id="view_hotel_food_search" model="ir.ui.view">
+    <record id="hotel_food_view_search" model="ir.ui.view">
         <field name="name">hotel.food.search</field>
         <field name="model">hotel.food</field>
         <field name="arch" type="xml">
@@ -15,7 +15,7 @@
         </field>
     </record>
     <!-- Food tree view -->
-    <record id="view_hotel_food_list" model="ir.ui.view">
+    <record id="hotel_food_view_list" model="ir.ui.view">
         <field name="name">hotel.food.list</field>
         <field name="model">hotel.food</field>
         <field name="arch" type="xml">
@@ -29,7 +29,7 @@
         </field>
     </record>
     <!-- Food form view -->
-    <record id="view_hotel_food_form" model="ir.ui.view">
+    <record id="hotel_food_view_form" model="ir.ui.view">
         <field name="name">hotel.food.form</field>
         <field name="model">hotel.food</field>
         <field name="arch" type="xml">
@@ -57,7 +57,7 @@
         </field>
     </record>
     <!-- Order food tree view -->
-    <record id="view_hotel_order_food_list" model="ir.ui.view">
+    <record id="hotel_order_food_view_list" model="ir.ui.view">
         <field name="name">hotel.order.food.list</field>
         <field name="model">hotel.order.food</field>
         <field name="arch" type="xml">
@@ -71,11 +71,11 @@
         </field>
     </record>
     <!-- Order food form view -->
-    <record id="view_hotel_order_food_form" model="ir.ui.view">
+    <record id="hotel_order_food_view_form" model="ir.ui.view">
         <field name="name">hotel.order.food.form</field>
         <field name="model">hotel.order.food</field>
         <field name="arch" type="xml">
-            <form string="Guest list">
+            <form string="Guest List">
                 <group>
                     <group>
                         <field name="room_id" widget="selection"  domain="[('room_available', '=', False)]"/>
@@ -182,7 +182,7 @@
                     <page string="Order List">
                         <!-- Order list tree view -->
                         <field name="order_list_ids">
-                            <tree string="Order list" editable="bottom" create = "0">
+                            <tree string="Order List" editable="bottom" create = "0">
                                 <field name="product" readonly="1"/>
                                 <field name="description" readonly="1"/>
                                 <field name="quantity"/>
@@ -206,7 +206,7 @@
         </field>
     </record>
     <!-- Food kanban view -->
-    <record id="view_hotel_food_kanban" model="ir.ui.view">
+    <record id="hotel_food_view_kanban" model="ir.ui.view">
         <field name="name">hotel.food.kanban</field>
         <field name="model">hotel.food</field>
         <field name="arch" type="xml">
@@ -249,7 +249,7 @@
         </field>
     </record>
     <!-- Food category tree view -->
-    <record id="view_hotel_food_category_list" model="ir.ui.view">
+    <record id="hotel_food_category_view_list" model="ir.ui.view">
         <field name="name">hotel.food.category.list</field>
         <field name="model">hotel.food.category</field>
         <field name="arch" type="xml">
@@ -259,7 +259,7 @@
         </field>
     </record>
     <!-- Order food window action -->
-    <record id="hotel_order_food_window_action" model="ir.actions.act_window">
+    <record id="hotel_order_food_action" model="ir.actions.act_window">
         <field name="name">Order Food</field>
         <field name="res_model">hotel.order.food</field>
         <field name="view_mode">tree,form</field>
@@ -268,21 +268,21 @@
         </field>
     </record>
     <!-- Food window action -->
-    <record id="hotel_food_window_action" model="ir.actions.act_window">
+    <record id="hotel_food_action" model="ir.actions.act_window">
         <field name="name">Food</field>
         <field name="res_model">hotel.food</field>
         <field name="view_mode">kanban,tree,form</field>
     </record>
     <!-- Food category window action -->
-    <record id="hotel_food_category_window_action" model="ir.actions.act_window">
+    <record id="hotel_food_category_action" model="ir.actions.act_window">
         <field name="name">Food Category</field>
         <field name="res_model">hotel.food.category</field>
         <field name="view_mode">tree</field>
     </record>
     <!-- Order food menu -->
-    <menuitem id="hotel_order_food_menu" name="Order Food" parent="main_hotel_management_menu"/>
+    <menuitem id="hotel_order_food_menu" name="Order Food" parent="hotel_management_menu_root"/>
     <!-- Order, Food and Food Category menu -->
-    <menuitem id="hotel_order_menu" name="Order" parent="hotel_order_food_menu"  action="hotel_order_food_window_action"/>
-    <menuitem id="hotel_food_menu" name="Food" parent="hotel_order_food_menu" action="hotel_food_window_action"/>
-    <menuitem id="hotel_food_category_menu" name="Food Category" parent="hotel_order_food_menu" action="hotel_food_category_window_action"/>
+    <menuitem id="hotel_order_menu" name="Order" parent="hotel_order_food_menu"  action="hotel_order_food_action"/>
+    <menuitem id="hotel_food_menu" name="Food" parent="hotel_order_food_menu" action="hotel_food_action"/>
+    <menuitem id="hotel_food_category_menu" name="Food Category" parent="hotel_order_food_menu" action="hotel_food_category_action"/>
 </odoo>

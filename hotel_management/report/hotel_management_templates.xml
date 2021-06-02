@@ -1,31 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <data>
-        <!-- PDF report action -->
-        <record id="hotel_action_report_pdf" model="ir.actions.report">
-            <field name="name">Hotel Management Report</field>
-            <field name="model">report.hotel_management.report_pdf</field>
-            <field name="report_type">qweb-pdf</field>
-            <field name="report_name">hotel_management.report_pdf</field>
-            <field name="report_file">hotel_management.report_pdf</field>
-            <field name="print_report_name">'Hotel Management Report'</field>
-        </record>
-        <!-- XLSX report action -->
-        <record id="hotel_action_report_xlsx" model="ir.actions.report">
-            <field name="name">Hotel Management Report XLSX</field>
-            <field name="model">report.hotel_management.report_xlsx</field>
-            <field name="report_type">xlsx</field>
-            <field name="report_name">hotel_management.report_xlsx</field>
-            <field name="report_file">hotel_management.report_xlsx</field>
-            <field name="print_report_name">'Hotel Management Report'</field>
-        </record>
-    </data>
     <!-- PDF report template -->
     <template id="report_pdf">
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
                 <div class="page">
                     <h2><strong>Hotel Management Report</strong></h2>
+                    <p><strong>Generated On: </strong><span t-esc="context_timestamp(datetime.datetime.now()).strftime('%d/%m/%Y %H:%M:%S')"/></p>
                     <div class="row mt32 mb32">
                         <t t-if="data['from_date']"><div class="col-4">
                             <strong>Date From:</strong>

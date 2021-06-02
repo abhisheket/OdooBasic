@@ -11,7 +11,7 @@ class HotelRoom(models.Model):
     room_number = fields.Char(string="Room Number", required=True)
     bed = fields.Selection(
         selection=[('single', 'Single'), ('double', 'Double'),
-                   ('dormitory', 'Dormitory')], string='Bed type',
+                   ('dormitory', 'Dormitory')], string='Bed Type',
         required=True)
     available_bed = fields.Integer(string="Available Beds")
     facility_ids = fields.Many2many('hotel.facility', string='Facilities',

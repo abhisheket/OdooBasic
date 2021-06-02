@@ -22,7 +22,7 @@
         </field>
     </record>
     <!-- Report wizard action window -->
-    <record id="hotel_report_filter_window_action" model="ir.actions.act_window">
+    <record id="hotel_report_filter_action" model="ir.actions.act_window">
         <field name="name">Add Filter to Hotel Report</field>
         <field name="res_model">hotel.report.filter</field>
         <field name="type">ir.actions.act_window</field>
@@ -30,6 +30,6 @@
         <field name="target">new</field>
     </record>
     <!-- Report menu -->
-    <menuitem id="hotel_management_report_menu" name="Hotel Management Report" parent="main_hotel_management_menu"/>
-    <menuitem id="hotel_management_report_sub_menu" name="Hotel Management Report" parent="hotel_management_report_menu" action="hotel_report_filter_window_action"/>
+    <menuitem id="hotel_management_report_menu" name="Report" parent="hotel_management_menu_root"/>
+    <menuitem id="hotel_management_report_sub_menu" name="Hotel Management Report" parent="hotel_management_report_menu" action="hotel_report_filter_action"/>
 </odoo>

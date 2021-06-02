@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <!-- Accommodation tree view -->
-    <record id="view_hotel_accommodation_list" model="ir.ui.view">
+    <record id="hotel_accommodation_view_list" model="ir.ui.view">
         <field name="name">hotel.accommodation.list</field>
         <field name="model">hotel.accommodation</field>
         <field name="arch" type="xml">
-            <tree string="Accommodation list" default_order="check_in desc"
+            <tree string="Accommodation List" default_order="check_in desc"
                   decoration-warning="expected_date &gt;= (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S') and expected_date &lt; (datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')"
                   decoration-danger="expected_date &gt;= (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S') and expected_date &lt; (datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S') and state != 'check-out'">
                 <field name="name"/>
@@ -18,11 +18,11 @@
         </field>
     </record>
     <!-- Accommodation form view -->
-    <record id="view_hotel_accommodation_form" model="ir.ui.view">
+    <record id="hotel_accommodation_view_form" model="ir.ui.view">
         <field name="name">hotel.accommodation.form</field>
         <field name="model">hotel.accommodation</field>
         <field name="arch" type="xml">
-            <form string="Accommodation form" >
+            <form string="Accommodation Form" >
                 <!-- Status bar with buttons and states -->
                 <header>
                     <button name="action_check_in" type="object" string="Check-In" class="oe_highlight" states="draft"/>
@@ -64,7 +64,7 @@
                         <page string="Guest Information">
                             <!-- Guest list tree view -->
                             <field name="guest_list_ids" attrs="{'readonly': [('state', '!=', 'draft')]}">
-                                <tree string="Guest list" editable="bottom">
+                                <tree string="Guest List" editable="bottom">
                                     <field name="guest_name_id" domain="[('is_company', '=', False)]"/>
                                     <field name="gender"/>
                                     <field name="age"/>
@@ -107,7 +107,7 @@
         </field>
     </record>
     <!-- Accommodation search view -->
-    <record id="view_hotel_accommodation_search" model="ir.ui.view">
+    <record id="hotel_accommodation_view_search" model="ir.ui.view">
         <field name="name">hotel.accommodation.search</field>
         <field name="model">hotel.accommodation</field>
         <field name="arch" type="xml">
@@ -115,9 +115,9 @@
                 <field name="room_number_id" string="Room"/>
                 <field name="guest_id" string="Guest"/>
                 <field name="name" string="Sequence"/>
-                <filter name="current_day_checkouts_filter" string="Current-day Checkouts" domain="[('expected_date', '&gt;=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')), ('expected_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
-                <filter name="next_day_checkouts_filter" string="Next-day Checkouts" domain = "[('expected_date', '&gt;=', (datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')), ('expected_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=2), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
-                <filter string="Check_In" name="check_in_filter" domain="[('state','=','check-in')]"/>
+                <filter name="current_day_checkouts_filter" string="Current-Day Checkouts" domain="[('expected_date', '&gt;=', (datetime.datetime.combine(context_today(), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')), ('expected_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <filter name="next_day_checkouts_filter" string="Next-Day Checkouts" domain = "[('expected_date', '&gt;=', (datetime.datetime.combine(context_today() + relativedelta(days=1), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')), ('expected_date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=2), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <filter string="Check-In" name="check_in_filter" domain="[('state','=','check-in')]"/>
                 <group>
                     <filter string="Room" name="room_group_filter" context="{'group_by':'room_number_id'}"/>
                     <filter string="Type" name="bed_type_group_filter" context="{'group_by':'bed_type'}"/>
@@ -127,11 +127,11 @@
         </field>
     </record>
     <!-- Guest tree view -->
-    <record id="view_hotel_guest_list" model="ir.ui.view">
+    <record id="hotel_guest_view_list" model="ir.ui.view">
         <field name="name">hotel.guest.list</field>
         <field name="model">hotel.guest</field>
         <field name="arch" type="xml">
-            <tree string="Guest list"  editable="bottom"  create="0">
+            <tree string="Guest List"  editable="bottom"  create="0">
                 <field name="guest_list_id"/>
                 <field name="guest_name_id"/>
                 <field name="gender"/>
@@ -140,7 +140,7 @@
         </field>
     </record>
     <!-- Accommodation window action -->
-    <record id="hotel_accommodation_list_action" model="ir.actions.act_window">
+    <record id="hotel_accommodation_action" model="ir.actions.act_window">
         <field name="name">Accommodation</field>
         <field name="res_model">hotel.accommodation</field>
         <field name="view_mode">tree,form</field>
@@ -151,13 +151,15 @@
         </field>
     </record>
     <!-- Guest window action -->
-    <record id="hotel_guest_list_action" model="ir.actions.act_window">
+    <record id="hotel_guest_action" model="ir.actions.act_window">
         <field name="name">Guests</field>
         <field name="res_model">hotel.guest</field>
         <field name="view_mode">tree</field>
     </record>
+    <!-- Main menu -->
+    <menuitem id="hotel_management_menu_root" name="Hotel Room Management"/>
     <!-- Reception menu and Accommodation sub-menu -->
-    <menuitem id="reception_menu" name="Reception" parent="main_hotel_management_menu"/>
-    <menuitem id="hotel_accommodation_menu" name="Accommodation" parent="reception_menu" action="hotel_accommodation_list_action"/>
-    <menuitem id="hotel_guest_menu" name="Guests" parent="reception_menu" action="hotel_guest_list_action"/>
+    <menuitem id="reception_menu" name="Reception" parent="hotel_management_menu_root"/>
+    <menuitem id="hotel_accommodation_menu" name="Accommodation" parent="reception_menu" action="hotel_accommodation_action"/>
+    <menuitem id="hotel_guest_menu" name="Guest" parent="reception_menu" action="hotel_guest_action"/>
 </odoo>

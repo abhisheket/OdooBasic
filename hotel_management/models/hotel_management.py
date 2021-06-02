@@ -9,12 +9,14 @@ class HotelAccommodation(models.Model):
     _name = "hotel.accommodation"
     _description = "Accommodation"
     _inherit = ["mail.thread", "mail.activity.mixin"]
+    _order = "name desc"
 
     name = fields.Char(string="Number", required=True, copy=False,
                        readonly=True, default=lambda self: 'New')
     guest_id = fields.Many2one('res.partner', ondelete='restrict',
                                string="Guest", required=True)
-    number_of_guest = fields.Integer(string='Number Of Guests', required=True)
+    number_of_guest = fields.Integer(string='Guests', required=True,
+                                     help="Number of guests")
     check_in = fields.Datetime(string="Check In", readonly=True)
     check_out = fields.Datetime(string="Check Out", readonly=True)
     bed_type = fields.Selection(
@@ -85,8 +87,7 @@ class HotelAccommodation(models.Model):
                                    ('id', 'in', match_room_bed_type),
                                    ('id', 'in', match_room_facility)]}}
         else:
-            return {'domain': {'room_number_id': [
-                ('id', '=', False)]}}
+            return {'domain': {'room_number_id': [('id', '=', False)]}}
 
     def action_check_in(self):
         if self.number_of_guest != len(self.guest_list_ids):
@@ -161,7 +162,6 @@ class HotelAccommodation(models.Model):
             current_date = fields.Date.today()
             for record in self.payment_line_ids:
                 invoice_lines.append((0, 0, {
-                    'product_id': record.name_id,
                     'name': record.product,
                     'quantity': record.quantity,
                     'price_unit': record.price,
