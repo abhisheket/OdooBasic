@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 {
     'name': 'Hotel Management',
     'version': '14.0.0.0.0',
@@ -31,3 +33,4 @@
     'application': True,
     'auto_install': False,
 }
+
