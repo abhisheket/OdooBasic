@@ -1,4 +1,4 @@
-odoo.define('pos_product_brand.order_line', function (require) {
+odoo.define('pos_product_brand.receipt_line', function (require) {
     'use strict';
 
     var models = require('point_of_sale.models');
@@ -7,8 +7,8 @@ odoo.define('pos_product_brand.order_line', function (require) {
 
     var _super_orderline = models.Orderline.prototype;
     models.Orderline = models.Orderline.extend({
-        get_orderlines: function() {
-            var line = _super_orderline.get_orderlines.apply(this,arguments);
+        export_for_printing: function() {
+            var line = _super_orderline.export_for_printing.apply(this,arguments);
             line.brand = this.get_product().brand;
             return line;
         },
