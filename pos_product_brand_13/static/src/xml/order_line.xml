@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="Orderline">
+        <t t-jquery=".price"  t-operation="after">
+            <t t-log="line.get_product().brand"/>
+            <t t-if="line.get_product().brand">
+                <span class="oe_left">Brand: </span>
+                <t t-esc="line.get_product().brand[1]" />
+            </t>
+        </t>
+    </t>
+
+</templates>
