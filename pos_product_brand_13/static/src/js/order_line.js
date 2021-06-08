@@ -4,4 +4,5 @@ odoo.define('pos_product_brand_13.order_line', function (require) {
     var models = require('point_of_sale.models');
 
     models.load_fields('product.product', 'brand');
+
 });

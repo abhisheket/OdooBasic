@@ -1,4 +1,4 @@
-odoo.define('pos_product_brand.receipt_line', function (require) {
+odoo.define('pos_product_brand_13.receipt_line', function (require) {
     'use strict';
 
     var models = require('point_of_sale.models');

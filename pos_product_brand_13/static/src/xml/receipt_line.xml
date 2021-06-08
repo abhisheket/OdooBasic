@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="OrderReceipt">
+        <t t-jquery="t[t-foreach='receipt.orderlines'][t-as='line']"  t-operation="append">
+            <t t-if="line.brand">
+                <div>
+                    <span class="oe_left">Brand: </span>
+                    <t t-esc="line.brand[1]" />
+                </div>
+            </t>
+        </t>
+    </t>
+
+</templates>
