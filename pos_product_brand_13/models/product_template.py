@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from odoo import fields, models
 
 
@@ -11,5 +12,6 @@ class ProductTemplate(models.Model):
 
 class ProductBrand(models.Model):
     _name = 'product.brand'
+    _description = 'Product Brand'
 
     name = fields.Char(string='Brand')

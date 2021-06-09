@@ -13,10 +13,11 @@
     """,
     'depends': ['point_of_sale'],
     'data': [
-        # 'views/point_of_sale_assets.xml',
+        'views/point_of_sale_assets.xml',
+        'views/pos_config_views.xml',
     ],
     'qweb': [
-        # 'static/src/xml/discount.xml',
+        'static/src/xml/discount_button.xml',
     ],
     'installable': True,
     'auto_install': False,

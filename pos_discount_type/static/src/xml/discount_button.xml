@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
-
+    <t t-name="DiscountButton" owl="1">
+       <span class="control-button">
+           <span class="fa-stack fa-2x discount-icons">
+               <i class="fa fa-certificate fa-stack-1x discount-certificate discount-icon"></i>
+               <i class="fa fa-tag fa-inverse fa-stack-1x discount-tag discount-icon"></i>
+           </span>
+           <span>Discount</span>
+       </span>
+   </t>
 </templates>
