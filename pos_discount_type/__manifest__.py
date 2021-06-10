@@ -18,6 +18,8 @@
     ],
     'qweb': [
         'static/src/xml/discount_button.xml',
+        'static/src/xml/order_line.xml',
+        # 'static/src/xml/receipt_line.xml',
     ],
     'installable': True,
     'auto_install': False,

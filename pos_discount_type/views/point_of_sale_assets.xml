@@ -6,6 +6,8 @@
 
             <script type="text/javascript" src="/pos_discount_type/static/src/js/discount_button.js"></script>
             <script type="text/javascript" src="/pos_discount_type/static/src/js/discount_input_popup.js"></script>
+            <script type="text/javascript" src="/pos_discount_type/static/src/js/order_line.js"></script>
+<!--            <script type="text/javascript" src="/pos_discount_type/static/src/js/receipt_line.js"></script>-->
         </xpath>
     </template>
 </odoo>

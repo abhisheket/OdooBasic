@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="Orderline" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension" owl="1">
+        <xpath expr="//span[hasclass('price')]/t[last()]" position="replace">
+            <t t-if="props.line.discount_type">
+                <span class="price">
+                    <t t-esc="env.pos.format_currency(props.line.total_without_tax)"/>
+                </span>
+            </t>
+            <t t-else="">
+                <span class="price">
+                    <t t-esc="env.pos.format_currency(props.line.get_display_price())"/>
+                </span>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-name="Orderline" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension" owl="1">
+        <xpath expr="//ul[hasclass('info-list')]/t[last()]" position="replace">
+            <t t-if="props.line.discount_type">
+                <t t-if="props.line.discount_type === 'amount'">
+                    <li class="info">
+                        With a
+                        <em>
+                            <t t-esc="env.pos.format_currency(props.line.discount_amount)" />
+                        </em>
+                        discount
+                    </li>
+                </t>
+                <t t-if="props.line.discount_type === 'percentage'">
+                    <li class="info">
+                        With a
+                        <em>
+                            <t t-esc="props.line.discount_percentage" />%
+                        </em>
+                        discount
+                    </li>
+                </t>
+            </t>
+        </xpath>
+    </t>
+
+</templates>
