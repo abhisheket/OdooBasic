@@ -1,0 +1,15 @@
+.discount-icons {
+    height: 2.5rem;
+    width: 2.5rem;
+}
+.discount-certificate {
+    color:#6EC89B;
+}
+.discount-tag {
+    font-size:1.125rem;
+}
+.discount-icon {
+    margin-top: -1rem;
+    height: 75%;
+    width: 75%;
+}

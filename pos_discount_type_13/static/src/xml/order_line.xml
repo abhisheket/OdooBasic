@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="Orderline">
+        <t t-jquery="ul.info-list"  t-operation="replace">
+            <ul class="info-list">
+                <t t-if="line.get_quantity_str() !== '1' || line.selected ">
+                    <li class="info">
+                        <em>
+                            <t t-esc="line.get_quantity_str()" />
+                        </em>
+                        <span> </span><t t-esc="line.get_unit().name" />
+                        at
+                        <t t-esc="widget.format_currency(line.get_product().lst_price)" />
+                        /
+                        <t t-esc="line.get_unit().name" />
+                    </li>
+                </t>
+                <t t-if="line.discount_type">
+                    <t t-if="line.discount_type === 'amount' and line.discount_amount > 0">
+                        <li class="info">
+                            With a
+                            <em>
+                                <t t-esc="widget.format_currency(line.discount_amount)" />
+                            </em>
+                            discount
+                        </li>
+                    </t>
+                    <t t-if="line.discount_type === 'percentage' and line.discount_percentage > 0">
+                        <li class="info">
+                            With a
+                            <em>
+                                <t t-esc="line.discount_percentage" />%
+                            </em>
+                            discount
+                        </li>
+                    </t>
+                </t>
+            </ul>
+            </t>
+    </t>
+
+</templates>

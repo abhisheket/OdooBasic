@@ -2,24 +2,23 @@
 <templates id="template" xml:space="preserve">
 
     <t t-name="Orderline" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension" owl="1">
-        <xpath expr="//span[hasclass('price')]/t[last()]" position="replace">
-            <t t-if="props.line.discount_type">
-                <span class="price">
-                    <t t-esc="env.pos.format_currency(props.line.total_without_tax)"/>
-                </span>
-            </t>
-            <t t-else="">
-                <span class="price">
-                    <t t-esc="env.pos.format_currency(props.line.get_display_price())"/>
-                </span>
+        <xpath expr="//ul[hasclass('info-list')]/t" position="replace">
+            <t t-if="props.line.get_quantity_str() !== '1' || props.line.selected ">
+                <li class="info">
+                    <em>
+                        <t t-esc="props.line.get_quantity_str()" />
+                    </em>
+                    <span> </span><t t-esc="props.line.get_unit().name" />
+                    at
+                    <t t-esc="env.pos.format_currency(props.line.get_product().lst_price)" />
+                    /
+                    <t t-esc="props.line.get_unit().name" />
+                </li>
             </t>
         </xpath>
-    </t>
-
-    <t t-name="Orderline" t-inherit="point_of_sale.Orderline" t-inherit-mode="extension" owl="1">
         <xpath expr="//ul[hasclass('info-list')]/t[last()]" position="replace">
             <t t-if="props.line.discount_type">
-                <t t-if="props.line.discount_type === 'amount'">
+                <t t-if="props.line.discount_type === 'amount' and props.line.discount_amount > 0">
                     <li class="info">
                         With a
                         <em>
@@ -28,7 +27,7 @@
                         discount
                     </li>
                 </t>
-                <t t-if="props.line.discount_type === 'percentage'">
+                <t t-if="props.line.discount_type === 'percentage' and props.line.discount_percentage > 0">
                     <li class="info">
                         With a
                         <em>

@@ -2,7 +2,7 @@
 
 {
     'name': 'pos_discount_type',
-    'version': '14.0.0.0.0',
+    'version': '13.0.0.0.0',
     'category': 'Sales/Point of Sale',
     'summary': 'Option to add discount in percentage or amount in PoS',
     'description': """

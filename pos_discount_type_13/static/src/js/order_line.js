@@ -1,4 +1,4 @@
-odoo.define('pos_discount_type.order_line', function (require) {
+odoo.define('pos_discount_type_13.order_line', function (require) {
     'use strict';
 
     var field_utils = require('web.field_utils');
@@ -16,7 +16,6 @@ odoo.define('pos_discount_type.order_line', function (require) {
             this.discount_amount = json.discount_amount;
             this.discount_percentage = json.discount_percentage;
             this.set_discount_total(json.discount_total);
-            console.log("init");
         },
         export_as_JSON: function() {
             var json = _super_orderline.export_as_JSON.call(this);
