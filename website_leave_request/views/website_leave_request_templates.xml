@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="leave_requests" name="Test Page">
+        <t t-call="website.layout">
+            <div class="container">
+                <h1>
+                    Leave Requests
+                </h1>
+                <p>
+                    <t t-esc="status" />
+                </p>
+            </div>
+
+        </t>
+    </template>
+
+</odoo>
