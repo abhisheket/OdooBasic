@@ -14,6 +14,7 @@
     'data': [
         'data/leave_request_data.xml',
         'views/website_leave_request_templates.xml',
+        'views/assets.xml',
     ],
     'installable': True,
     'auto_install': False,

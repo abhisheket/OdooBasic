@@ -1,17 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <template id="leave_requests" name="Test Page">
+    <template id="leave_requests" name="Leave Requests">
         <t t-call="website.layout">
             <div class="container">
-                <h1>
-                    Leave Requests
-                </h1>
-                <p>
-                    <t t-esc="status" />
-                </p>
+                <h1>Leave Requests</h1>
+                <a href="/leave_requests/create_new_request" class="btn btn-primary mb-2">Create</a>
+                <table class="table table-bordered table-info table-hover pb-5" t-if="leave_records">
+                    <thead>
+                        <tr>
+                            <th>Time Off Type</th>
+                            <th>Description</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                            <th/>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="leave_records" t-as="leave_record">
+                            <td t-esc="leave_record.holiday_status_id.name" />
+                            <td t-esc="leave_record.name" />
+                            <td t-esc="leave_record.date_from" />
+                            <td t-esc="leave_record.date_to" />
+                            <td t-esc="leave_record.duration_display" />
+                            <td>
+                                <t t-if="leave_record.state == 'draft'">To Submit</t>
+                                <t t-if="leave_record.state == 'cancel'">Cancelled</t>
+                                <t t-if="leave_record.state == 'confirm'">To Approve</t>
+                                <t t-if="leave_record.state == 'refuse'">Refused</t>
+                                <t t-if="leave_record.state == 'validate1'">Second Approval</t>
+                                <t t-if="leave_record.state == 'validate'">Approved</t>
+                            </td>
+                            <td>
+                                <a href="#"><i class="fa fa-trash"> Delete</i></a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="alert alert-success" role="alert" t-if="not leave_records">Currently you don't have any leave requests.</div>
             </div>
+        </t>
+    </template>
 
+    <template id="new_leave_request" name="New Leave Request">
+        <t t-call="website.layout">
+            <div class="container">
+                <h1>Leave Requests</h1>
+                <h3 class="col col-md-6 bg-info-light">New</h3>
+                <form>
+                    <div class="col-12 mb-3">
+                        <select id="holiday_status_id" name="holiday_status_id" class="form-select ml-0 col-sm-6 py-2" required="1">
+                            <t t-foreach="leave_types" t-as="holiday_status_id">
+                                <option t-esc="holiday_status_id.name" t-att-value="holiday_status_id.id" />
+                            </t>
+                        </select>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="request_date_from" class="col-sm-1 col-form-label">Dates</label>
+                        <span class="col-sm-0 ml-3 mr-1 mt-2 from_label">From </span>
+                        <input id="request_date_from" name="request_date_from" type="date" class="form-control col-sm-2 date_from" />
+                        <span class="col-sm-0 ml-3 mr-1 mt-2 to_label">To </span>
+                        <input id="request_date_to" name="request_date_to" type="date" class="form-control col-sm-2 date_to" />
+                        <select id="request_date_from_period" name="request_date_from_period" class="form-control col-sm-2 ml-2 from_period" required="1" style="display:none">
+                            <option value=""/>
+                            <option value="am">Morning</option>
+                            <option value="pm">Afternoon</option>
+                        </select>
+                    </div>
+                    <div class="row mb-3 leave-checkbox" style="display:none">
+                        <div class="form-check form-check-inline col-sm-2 offset-sm-1">
+                            <input id="request_unit_half" name="request_unit_half" class="form-check-input ml-3" type="checkbox" value="False" />
+                            <label class="form-check-label mt-1" for="request_unit_half" style="font-weight:normal !important">Half Day</label>
+                        </div>
+                        <div class="form-check form-check-inline col-sm-2">
+                            <input id="request_unit_hours" name="request_unit_hours" class="form-check-input" type="checkbox" value="False" />
+                            <label class="form-check-label mt-1" for="request_unit_hours" style="font-weight:normal !important">Custom Hours</label>
+                        </div>
+                    </div>
+                    <div class="row mb-3 custom_hours" style="display:none">
+                        <span class="offset-sm-1" />
+                        <span class="col-sm-0 mr-1 mt-2 from_label ml-3">From </span>
+                        <select id="request_hour_from" name="request_hour_from" class="form-control col-sm-2" required="1">
+                            <option value=""/>
+                            <option value="0">12:00 AM</option>
+                            <option value="0.5">12:30 AM</option>
+                            <t t-foreach="hour_list" t-as="hour">
+                                <option t-att="['value', 'hour']"><t t-esc="hour"/>:00 AM</option>
+                                <t t-set="hour_half" t-value="hour + 0.5"/>
+                                <option t-att="['value', 'hour_half']"><t t-esc="hour"/>:30 AM</option>
+                            </t>
+                            <option value="12">12:00 PM</option>
+                            <option value="12.5">12:30 PM</option>
+                            <t t-foreach="hour_list" t-as="hour_pm">
+                                <t t-set="hour" t-value="hour_pm + 12"/>
+                                <option t-att="['value', 'hour']"><t t-esc="hour"/>:00 PM</option>
+                                <t t-set="hour2" t-value="hour + 0.5"/>
+                                <option t-att="['value', 'hour2']"><t t-esc="hour"/>:30 PM</option>
+                            </t>
+                        </select>
+                        <span class="col-sm-0 ml-3 mr-1 mt-2 to_label">To </span>
+                        <select id="request_hour_to" name="request_hour_to" class="form-control col-sm-2" required="1">
+                            <option value=""/>
+                            <option value="0">12:00 AM</option>
+                            <option value="0.5">12:30 AM</option>
+                            <t t-foreach="hour_list" t-as="hour">
+                                <option t-att="['value', 'hour']"><t t-esc="hour"/>:00 AM</option>
+                                <t t-set="hour_half" t-value="hour + 0.5"/>
+                                <option t-att="['value', 'hour_half']"><t t-esc="hour"/>:30 AM</option>
+                            </t>
+                            <option value="12">12:00 PM</option>
+                            <option value="12.5">12:30 PM</option>
+                            <t t-foreach="hour_list" t-as="hour_pm">
+                                <t t-set="hour" t-value="hour_pm + 12"/>
+                                <option t-att="['value', 'hour']"><t t-esc="hour"/>:00 PM</option>
+                                <t t-set="hour2" t-value="hour + 0.5"/>
+                                <option t-att="['value', 'hour2']"><t t-esc="hour"/>:30 PM</option>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="request_date_from" class="col-sm-1 col-form-label">Duration</label>
+                        <div class="col-sm-4">
+                            <input id="number_of_days" name="number_of_days" class="form-control col-sm-12 duration" type="number" value="0.00"/>
+                        </div>
+                        <span class="duration_unit mt-2">Days</span>
+<!--                        <input id="number_of_hours_text" name="number_of_hours_text" value="Days" />-->
+                    </div>
+                    <div class="row mb-3">
+                        <label for="name" class="col-sm-1 col-form-label">Description</label>
+                        <div class="col-sm-8">
+                          <textarea id="name" name="name" class="form-control col-sm-7" />
+                        </div>
+                    </div>
+                    <div class="col-12 offset-sm-1 pb-5">
+                        <button type="submit" class="btn btn-primary ml-n3">Submit</button>
+                    </div>
+                </form>
+            </div>
         </t>
     </template>
 
