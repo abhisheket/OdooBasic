@@ -19,6 +19,9 @@ class LeaveRequest(http.Controller):
                 website=True)
     def new_leave_request(self):
         leave_types = request.env['hr.leave.type'].search([])
+            # ['&', ('virtual_remaining_leaves', '>', 0), '|',
+            #  ('allocation_type', 'in', ['fixed_allocation', 'no']), '&',
+            #  ('allocation_type', '=', 'fixed'), ('max_leaves', '>', '0')])
         leave_data = request.env['hr.leave'].search([])
         hour_list = list(range(1, 12))
         user = request.uid

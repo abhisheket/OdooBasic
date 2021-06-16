@@ -51,7 +51,7 @@
                 <h3 class="col col-md-6 bg-info-light">New</h3>
                 <form>
                     <div class="col-12 mb-3">
-                        <select id="holiday_status_id" name="holiday_status_id" class="form-select ml-0 col-sm-6 py-2" required="1">
+                        <select id="holiday_status_id" name="holiday_status_id" class="form-select ml-0 col-sm-6 py-2 mt-3" required="1">
                             <t t-foreach="leave_types" t-as="holiday_status_id">
                                 <option t-esc="holiday_status_id.name" t-att-value="holiday_status_id.id" />
                             </t>
@@ -63,70 +63,69 @@
                         <input id="request_date_from" name="request_date_from" type="date" class="form-control col-sm-2 date_from" />
                         <span class="col-sm-0 ml-3 mr-1 mt-2 to_label">To </span>
                         <input id="request_date_to" name="request_date_to" type="date" class="form-control col-sm-2 date_to" />
-                        <select id="request_date_from_period" name="request_date_from_period" class="form-control col-sm-2 ml-2 from_period" required="1" style="display:none">
+                        <select id="request_date_from_period" name="request_date_from_period" class="form-control col-sm-2 ml-2 from_period" required="1" style="display:none;">
                             <option value=""/>
                             <option value="am">Morning</option>
                             <option value="pm">Afternoon</option>
                         </select>
                     </div>
-                    <div class="row mb-3 leave-checkbox" style="display:none">
+                    <div class="row mb-3 leave_checkbox" style="display:none;">
                         <div class="form-check form-check-inline col-sm-2 offset-sm-1">
                             <input id="request_unit_half" name="request_unit_half" class="form-check-input ml-3" type="checkbox" value="False" />
-                            <label class="form-check-label mt-1" for="request_unit_half" style="font-weight:normal !important">Half Day</label>
+                            <label class="form-check-label mt-1" for="request_unit_half" style="font-weight:normal !important;">Half Day</label>
                         </div>
-                        <div class="form-check form-check-inline col-sm-2">
+                        <div class="form-check form-check-inline col-sm-2 ml-n5 custom_hours_checkbox">
                             <input id="request_unit_hours" name="request_unit_hours" class="form-check-input" type="checkbox" value="False" />
-                            <label class="form-check-label mt-1" for="request_unit_hours" style="font-weight:normal !important">Custom Hours</label>
+                            <label class="form-check-label mt-1" for="request_unit_hours" style="font-weight:normal !important;">Custom Hours</label>
                         </div>
                     </div>
-                    <div class="row mb-3 custom_hours" style="display:none">
-                        <span class="offset-sm-1" />
-                        <span class="col-sm-0 mr-1 mt-2 from_label ml-3">From </span>
-                        <select id="request_hour_from" name="request_hour_from" class="form-control col-sm-2" required="1">
+                    <div class="row mb-3 ml-1 custom_hours" style="display:none;">
+                        <span class="col-sm-0 offset-sm-1 mr-1 mt-2">From </span>
+                        <select id="request_hour_from" name="request_hour_from" class="form-control col-sm-2 custom_time" required="1">
                             <option value=""/>
                             <option value="0">12:00 AM</option>
                             <option value="0.5">12:30 AM</option>
                             <t t-foreach="hour_list" t-as="hour">
-                                <option t-att="['value', 'hour']"><t t-esc="hour"/>:00 AM</option>
+                                <option t-att="['value', hour]"><t t-esc="hour"/>:00 AM</option>
                                 <t t-set="hour_half" t-value="hour + 0.5"/>
-                                <option t-att="['value', 'hour_half']"><t t-esc="hour"/>:30 AM</option>
+                                <option t-att="['value', hour_half]"><t t-esc="hour"/>:30 AM</option>
                             </t>
                             <option value="12">12:00 PM</option>
                             <option value="12.5">12:30 PM</option>
                             <t t-foreach="hour_list" t-as="hour_pm">
                                 <t t-set="hour" t-value="hour_pm + 12"/>
-                                <option t-att="['value', 'hour']"><t t-esc="hour"/>:00 PM</option>
-                                <t t-set="hour2" t-value="hour + 0.5"/>
-                                <option t-att="['value', 'hour2']"><t t-esc="hour"/>:30 PM</option>
+                                <option t-att="['value', hour]"><t t-esc="hour"/>:00 PM</option>
+                                <t t-set="hour_half" t-value="hour + 0.5"/>
+                                <option t-att="['value', hour_half]"><t t-esc="hour"/>:30 PM</option>
                             </t>
                         </select>
-                        <span class="col-sm-0 ml-3 mr-1 mt-2 to_label">To </span>
-                        <select id="request_hour_to" name="request_hour_to" class="form-control col-sm-2" required="1">
+                        <span class="col-sm-0 ml-3 mr-1 mt-2">To </span>
+                        <select id="request_hour_to" name="request_hour_to" class="form-control col-sm-2 custom_time" required="1">
                             <option value=""/>
                             <option value="0">12:00 AM</option>
                             <option value="0.5">12:30 AM</option>
                             <t t-foreach="hour_list" t-as="hour">
-                                <option t-att="['value', 'hour']"><t t-esc="hour"/>:00 AM</option>
+                                <option t-att="['value', hour]"><t t-esc="hour"/>:00 AM</option>
                                 <t t-set="hour_half" t-value="hour + 0.5"/>
-                                <option t-att="['value', 'hour_half']"><t t-esc="hour"/>:30 AM</option>
+                                <option t-att="['value', hour_half]"><t t-esc="hour"/>:30 AM</option>
                             </t>
                             <option value="12">12:00 PM</option>
                             <option value="12.5">12:30 PM</option>
                             <t t-foreach="hour_list" t-as="hour_pm">
                                 <t t-set="hour" t-value="hour_pm + 12"/>
-                                <option t-att="['value', 'hour']"><t t-esc="hour"/>:00 PM</option>
-                                <t t-set="hour2" t-value="hour + 0.5"/>
-                                <option t-att="['value', 'hour2']"><t t-esc="hour"/>:30 PM</option>
+                                <option t-att="['value', hour]"><t t-esc="hour"/>:00 PM</option>
+                                <t t-set="hour_half" t-value="hour + 0.5"/>
+                                <option t-att="['value', hour_half]"><t t-esc="hour"/>:30 PM</option>
                             </t>
                         </select>
                     </div>
-                    <div class="row mb-3">
+                    <div class="row mb-3 duration_div">
                         <label for="request_date_from" class="col-sm-1 col-form-label">Duration</label>
-                        <div class="col-sm-4">
-                            <input id="number_of_days" name="number_of_days" class="form-control col-sm-12 duration" type="number" value="0.00"/>
+                        <div class="col-sm-4 duration duration_days">
+                            <input id="number_of_days" name="number_of_days" class="form-control col-sm-12" type="number" value="0.00"/>
                         </div>
-                        <span class="duration_unit mt-2">Days</span>
-<!--                        <input id="number_of_hours_text" name="number_of_hours_text" value="Days" />-->
+                        <span class="duration_unit duration_days mt-2">Days</span>
+                        <input id="number_of_hours_text" name="number_of_hours_text" style="background:transparent; border:none; display:none" value="(0 Hours)" disabled="1" />
                     </div>
                     <div class="row mb-3">
                         <label for="name" class="col-sm-1 col-form-label">Description</label>
