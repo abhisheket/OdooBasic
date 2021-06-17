@@ -2,6 +2,8 @@
 <odoo>
     <template id="assets_frontend" inherit_id="website.assets_frontend">
         <xpath expr="." position="inside">
+            <link rel="stylesheet" type="text/scss" href="/website_leave_request/static/src/css/website_leave_request.css"/>
+
             <script type="text/javascript" src="/website_leave_request/static/src/js/website_leave_request_form.js"/>
         </xpath>
     </template>

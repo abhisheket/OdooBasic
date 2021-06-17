@@ -1,0 +1,19 @@
+.delete_request {
+    width: 5.5rem;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+.request_time {
+    font-weight:normal !important;
+}
+#number_of_hours_text {
+    background:transparent;
+    border:none;
+    display:none;
+}
