@@ -12,6 +12,7 @@
     """,
     'depends': ['website', 'hr_holidays'],
     'data': [
+        'security/website_leave_request_security.xml',
         'data/leave_request_data.xml',
         'views/website_leave_request_templates.xml',
         'views/assets.xml',

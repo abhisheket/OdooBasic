@@ -22,8 +22,8 @@
                         <tr t-foreach="leave_records" t-as="leave_record">
                             <td t-esc="leave_record.holiday_status_id.name" />
                             <td t-esc="leave_record.name" />
-                            <td t-esc="leave_record.date_from" />
-                            <td t-esc="leave_record.date_to" />
+                            <td t-esc="leave_record.request_date_from.strftime('%d-%m-%Y')" />
+                            <td t-esc="leave_record.request_date_to.strftime('%d-%m-%Y')" />
                             <td t-esc="leave_record.duration_display" />
                             <td>
                                 <t t-if="leave_record.state == 'draft'">To Submit</t>
@@ -62,9 +62,9 @@
                     <div class="row mb-3">
                         <label for="request_date_from" class="col-sm-1 col-form-label">Dates</label>
                         <span class="col-sm-0 ml-3 mr-1 mt-2 from_label">From </span>
-                        <input id="request_date_from" name="request_date_from" type="date" class="form-control col-sm-2 date_from"/>
+                        <input id="request_date_from" name="request_date_from" type="date" class="form-control col-sm-2 date_from" required="True"/>
                         <span class="col-sm-0 ml-3 mr-1 mt-2 to_label">To </span>
-                        <input id="request_date_to" name="request_date_to" type="date" class="form-control col-sm-2 date_to"/>
+                        <input id="request_date_to" name="request_date_to" type="date" class="form-control col-sm-2 date_to" required="True"/>
                         <select id="request_date_from_period" name="request_date_from_period" class="form-control col-sm-2 ml-2" style="display:none;">
                             <option value=""/>
                             <option value="am">Morning</option>

@@ -1,7 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import math
+
+from collections import namedtuple
+
+from datetime import datetime
+from pytz import timezone, UTC
+
 from odoo import http
 from odoo.http import request
+from odoo.addons.resource.models.resource import float_to_time, HOURS_PER_DAY
 
 
 class LeaveRequest(http.Controller):
@@ -10,6 +18,19 @@ class LeaveRequest(http.Controller):
     def load_leave_request(self):
         leave_records = request.env['hr.leave'].sudo().search(
             [('user_id.id', '=', request.uid)])
+        # print(request.env['hr.employee'].sudo().search(
+        #     [('user_id', '=', request.uid)]).address_id)
+        # print(request.env['res.users'].sudo().search(
+        #     [('id', '=', request.uid)]).partner_id)
+        # print(request.env['hr.employee'].sudo().search(
+        #     [('address_home_id', '=', request.env['res.users'].sudo().search(
+        #         [('id', '=', request.uid)]).partner_id.id)]))
+        # employee_id = request.env['hr.employee'].sudo().search(
+        #     [('address_home_id', '=', request.env['res.users'].sudo().search(
+        #         [('id', '=', request.uid)]).partner_id.id)]).id
+        # leave_records = request.env['hr.leave'].sudo().search(
+        #     [('employee_id', '=', employee_id)])
+        # if employee_id:
         values = {
             'leave_records': leave_records,
         }
@@ -33,38 +54,167 @@ class LeaveRequest(http.Controller):
         }
         return request.render("website_leave_request.new_leave_request", value)
 
+    @http.route('/leave_requests/new_request_validate', type='json',
+                auth='user', website=True)
+    def compute_date_from_to(self, **kwargs):
+        DummyAttendance = namedtuple(
+            'DummyAttendance',
+            'hour_from, hour_to, dayofweek, day_period, week_type')
+        request_date_from_period = kwargs.get('request_date_from_period')
+        request_hour_from = kwargs.get('request_hour_from')
+        request_hour_to = kwargs.get('request_hour_to')
+        request_date_from = kwargs.get('request_date_from')
+        request_date_to = kwargs.get('request_date_to')
+        request_unit_half = kwargs.get('request_unit_half')
+        request_unit_hours = kwargs.get('request_unit_hours')
+        request_unit_custom = kwargs.get('request_unit_custom')
+        employee_id = kwargs.get('employee_id')
+        date_from = kwargs.get('date_from')
+        date_to = kwargs.get('date_to')
+        if request_date_from and request_date_to and request_date_from > request_date_to:
+            request_date_to = request_date_from
+        if not request_date_from:
+            date_from = False
+        elif not request_unit_half and not request_unit_hours and not request_date_to:
+            date_to = False
+        else:
+            if request_unit_half or request_unit_hours:
+                request_date_to = request_date_from
+            resource_calendar_id = employee_id.resource_calendar_id or self.env.company.resource_calendar_id
+            domain = [('calendar_id', '=', resource_calendar_id.id),
+                      ('display_type', '=', False)]
+            attendances = self.env[
+                'resource.calendar.attendance'].read_group(domain, [
+                'ids:array_agg(id)', 'hour_from:min(hour_from)',
+                'hour_to:max(hour_to)', 'week_type', 'dayofweek',
+                'day_period'], ['week_type', 'dayofweek', 'day_period'],
+                                                           lazy=False)
+
+            # Must be sorted by dayofweek ASC and day_period DESC
+            attendances = sorted([DummyAttendance(group['hour_from'],
+                                                  group['hour_to'],
+                                                  group['dayofweek'],
+                                                  group['day_period'],
+                                                  group['week_type']) for
+                                  group in attendances], key=lambda att: (
+            att.dayofweek, att.day_period != 'morning'))
+
+            default_value = DummyAttendance(0, 0, 0, 'morning', False)
+
+            if resource_calendar_id.two_weeks_calendar:
+                # find week type of start_date
+                start_week_type = int(math.floor(
+                    (request_date_from.toordinal() - 1) / 7) % 2)
+                attendance_actual_week = [
+                    att for att in attendances if att.week_type is False or int(
+                        att.week_type) == start_week_type]
+                attendance_actual_next_week = [
+                    att for att in attendances if
+                    att.week_type is False or int(
+                        att.week_type) != start_week_type]
+                # First, add days of actual week coming after date_from
+                attendance_filtred = [
+                    att for att in attendance_actual_week if int(
+                        att.dayofweek) >= request_date_from.weekday()]
+                # Second, add days of the other type of week
+                attendance_filtred += list(attendance_actual_next_week)
+                # Third, add days of actual week (to consider days that we have
+                # remove first because they coming before date_from)
+                attendance_filtred += list(attendance_actual_week)
+
+                end_week_type = int(math.floor(
+                    (request_date_to.toordinal() - 1) / 7) % 2)
+                attendance_actual_week = [
+                    att for att in attendances if att.week_type is False or int(
+                        att.week_type) == end_week_type]
+                attendance_actual_next_week = [
+                    att for att in attendances if att.week_type is False or int(
+                        att.week_type) != end_week_type]
+                attendance_filtred_reversed = list(reversed(
+                    [att for att in attendance_actual_week if
+                     int(att.dayofweek) <= request_date_to.weekday()]))
+                attendance_filtred_reversed += list(
+                    reversed(attendance_actual_next_week))
+                attendance_filtred_reversed += list(
+                    reversed(attendance_actual_week))
+
+                # find first attendance coming after first_day
+                attendance_from = attendance_filtred[0]
+                # find last attendance coming before last_day
+                attendance_to = attendance_filtred_reversed[0]
+            else:
+                # find first attendance coming after first_day
+                attendance_from = next(
+                    (att for att in attendances if int(
+                        att.dayofweek) >= request_date_from.weekday()),
+                    attendances[0] if attendances else default_value)
+                # find last attendance coming before last_day
+                attendance_to = next(
+                    (att for att in reversed(attendances) if
+                     int(att.dayofweek) <= request_date_to.weekday()),
+                    attendances[-1] if attendances else default_value)
+
+            compensated_request_date_from = request_date_from
+            compensated_request_date_to = request_date_to
+
+            if request_unit_half:
+                if request_date_from_period == 'am':
+                    hour_from = float_to_time(attendance_from.hour_from)
+                    hour_to = float_to_time(attendance_from.hour_to)
+                else:
+                    hour_from = float_to_time(attendance_to.hour_from)
+                    hour_to = float_to_time(attendance_to.hour_to)
+            elif request_unit_hours:
+                hour_from = float_to_time(float(request_hour_from))
+                hour_to = float_to_time(float(request_hour_to))
+            elif request_unit_custom:
+                hour_from = date_from.time()
+                hour_to = date_to.time()
+                compensated_request_date_from = self._adjust_date_based_on_tz(
+                    request_date_from, hour_from)
+                compensated_request_date_to = self._adjust_date_based_on_tz(
+                    request_date_to, hour_to)
+            else:
+                hour_from = float_to_time(attendance_from.hour_from)
+                hour_to = float_to_time(attendance_to.hour_to)
+
+            date_from = timezone(self.env.user.tz).localize(
+                datetime.combine(compensated_request_date_from,
+                                 hour_from)).astimezone(UTC).replace(
+                tzinfo=None)
+            date_to = timezone(self.env.user.tz).localize(
+                datetime.combine(compensated_request_date_to,
+                                 hour_to)).astimezone(UTC).replace(tzinfo=None)
+        date_data = {
+            'request_date_to': request_date_to,
+            'date_from': date_from,
+            'date_to': date_to,
+        }
+        return date_data
+
     @http.route('/leave_requests/create_request', type='http', auth='user',
                 website=True)
     def create_leave_request(self, **kwargs):
-        print(kwargs)
-        # # last_record = request.env['hr.leave'].search(
-        # #     [], limit=1, order='id desc')
-        # # print(last_record.id)
-        # add_values = {
-        #     'department_id': request.uid,
-        # }
-        # print(add_values)
-        # kwargs.update(add_values)
-        # print(kwargs)
-        # request.env['hr.leave'].sudo().create(kwargs)
-
-        employee = request.env['hr.employee'].sudo().search(
-            [('user_id.id', '=', request.uid)])
-        employee_id = employee.id
-        if employee:
+        employee_id = request.env['hr.employee'].sudo().search(
+            [('user_id.id', '=', request.uid)]).id
+        # employee_id = request.env['hr.employee'].sudo().search(
+        #     [('address_id', '=', request.env['res.users'].sudo().search(
+        #         [('id', '=', request.uid)]).partner_id.id)]).id
+        # employee_id = request.env['hr.employee'].sudo().search(
+        #     [('address_home_id', '=', request.env['res.users'].sudo().search(
+        #         [('id', '=', request.uid)]).partner_id.id)]).id
+        if employee_id:
             values = {
-                'holiday_status_id': 2,
-                'request_date_from': '2018-06-28',
-                'request_date_to': '2018-06-29',
-                'number_of_days': 2.00,
-                'name': 'Repair laptop.',
-                # 'department_id': department_id,
+                'holiday_status_id': int(kwargs.get('holiday_status_id')),
+                # 'number_of_days': float(kwargs.get('number_of_days')),
                 'employee_id': employee_id,
-                # 'company_id': company_id,
             }
-        print(values)
-        # request.env['hr.leave'].sudo().create(values)
-        return request.redirect('/leave_requests/create_request')
+            kwargs.update(values)
+            print(kwargs)
+            kwargs.pop('number_of_days')
+            print(kwargs)
+            request.env['hr.leave'].sudo().create(kwargs)
+        return request.redirect('/leave_requests/')
 
     @http.route(
         ['/leave_requests/delete_request/<model("hr.leave"):leave_record>'],

@@ -2,22 +2,24 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
     'use strict';
 
     const rpc = require('web.rpc');
+    const ajax = require('web.ajax');
 
     $(document).ready(function() {
         $("#holiday_status_id").change(function() {
+            $("#request_date_from").prop('required', false);
             $(".date_from").removeClass("col-sm-4");
             $(".date_from").addClass("col-sm-2");
             $(".duration_div").show();
             $(".from_label").css("display", "block");
             $(".to_label").css("display", "block");
             $(".date_to").css("display", "block");
-            $(".date_to").attr("required");
-            $(".date_from").attr("required");
+            $(".date_to").attr('required', true);
+            $(".date_from").attr('required', true);
             $("#number_of_hours_text").removeClass("ml-3");
             $("#number_of_days").val("0.00");
             $("#number_of_hours_text").val("");
-            $("#request_hour_from").removeAttr("required");
-            $("#request_hour_to").removeAttr("required");
+            $("#request_hour_from").prop('required', false);
+            $("#request_hour_to").prop('required', false);
             rpc.query ({
                 model: 'hr.leave.type',
                 method: 'search_read' ,
@@ -31,7 +33,7 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                     $(".custom_hours").css("display", "none");
                     $("#number_of_hours_text").css("display", "none");
                     $("#request_date_from_period").css("display", "none");
-                    $("#request_date_from_period").removeAttr("required");
+                    $("#request_date_from_period").prop('required', false);
                     $(".duration").removeClass("col-sm-3");
                     $(".duration").addClass("col-sm-4");
                     $(".duration_days").css("display", "block");
@@ -58,7 +60,7 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 $(".from_label").css("display", "none");
                 $(".to_label").css("display", "none");
                 $(".date_to").css("display", "none");
-                $(".date_to").removeAttr("required");
+                $(".date_to").prop('required', false);
                 $(".duration_days").css("display", "none");
                 $("#number_of_hours_text").val("0 Hours");
                 $(".date_from").addClass("ml-3");
@@ -68,14 +70,14 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 $(".from_label").css("display", "block");
                 $(".to_label").css("display", "block");
                 $(".date_to").css("display", "block");
-                $(".date_to").attr("required");
+                $(".date_to").attr('required', true);
                 $(".duration_days").css("display", "block");
                 $("#number_of_hours_text").val("(0 Hours)");
                 $("#request_date_from_period").css("display", "none");
-                $("#request_date_from_period").removeAttr("required");
+                $("#request_date_from_period").prop('required', false);
                 $(".custom_hours").hide();
-                $("#request_hour_from").removeAttr("required");
-                $("#request_hour_to").removeAttr("required");
+                $("#request_hour_from").prop('required', false);
+                $("#request_hour_to").prop('required', false);
                 $(".date_from").removeClass("ml-3");
                 $(".date_from").removeClass("col-sm-4");
                 $(".date_from").addClass("col-sm-2");
@@ -88,49 +90,56 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
             $(".duration_div").show();
             if ($(this).is(':checked') && $(".custom_hours_checkbox").css("display") == 'none') {
                 $(".duration_div").css("display", "none");
-                $(".date_to").removeAttr("required");
+                $(".date_to").prop('required', false);
             }
             if ($(this).is(':checked')) {
                 $("#request_unit_hours").prop("checked", false);
                 $(".custom_hours").css("display", "none");
-                $("#request_hour_from").removeAttr("required");
-                $("#request_hour_to").removeAttr("required");
-                $(".date_to").removeAttr("required");
+                $("#request_hour_from").prop('required', false);
+                $("#request_hour_to").prop('required', false);
+                $(".date_to").prop('required', false);
                 $("#request_date_from_period").css("display", "block");
-                $("#request_date_from_period").attr("required");
+                $("#request_date_from_period").attr('required', true);
                 $(".date_from").removeClass("col-sm-4");
                 $(".date_from").addClass("col-sm-2");
                 $("#request_hour_to").val("");
                 $("#request_hour_from").val("");
             } else {
                 $("#request_date_from_period").css("display", "none");
-                $("#request_date_from_period").removeAttr("required");
-                $(".date_to").attr("required");
+                $("#request_date_from_period").prop('required', false);
+                $(".date_to").attr('required', true);
             }
         });
         $("#request_unit_hours").on("change", function() {
             if ($(this).is(':checked')) {
                 $("#request_unit_half").prop("checked", false);
                 $("#request_date_from_period").css("display", "none");
-                $("#request_date_from_period").removeAttr("required");
-                $(".date_to").removeAttr("required");
+                $("#request_date_from_period").prop('required', false);
+                $(".date_to").prop('required', false);
                 $(".custom_hours").show();
-                $("#request_hour_from").attr("required");
-                $("#request_hour_to").attr("required");
+                $("#request_hour_from").attr('required', true);
+                $("#request_hour_to").attr('required', true);
                 $(".date_from").removeClass("col-sm-2");
                 $(".date_from").addClass("col-sm-4");
             } else {
                 $(".custom_hours").hide();
-                $(".date_to").attr("required");
-                $("#request_hour_from").removeAttr("required");
-                $("#request_hour_to").removeAttr("required");
+                $(".date_to").attr('required', true);
+                $("#request_hour_from").prop('required', false);
+                $("#request_hour_to").prop('required', false);
             }
         });
         $("#request_date_from").on("change", function() {
-            checkHalfDay();
+            if ($("#request_unit_half").is(':checked')) {
+                checkHalfDay();
+            } else if (!$("#request_unit_half").is(':checked') && !$("#request_unit_hours").is(':checked')) {
+                checkFromToDate()
+            }
         });
         $("#request_date_from_period").on("change", function() {
             checkHalfDay();
+        });
+        $("#request_date_to").on("change", function() {
+            checkFromToDate()
         });
         $("#request_hour_from").on("change", function() {
             if ($("#request_hour_from").val() && $("#request_hour_to").val()) {
@@ -146,6 +155,15 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 }
             }
         });
+        function checkFromToDate() {
+            if ($("#request_date_from").val() && $("#request_date_to").val()) {
+                var date_from = new Date($("#request_date_from").val());
+                var date_to = new Date($("#request_date_to").val());
+                if (date_from > date_to) {
+                    $("#request_date_to").val($("#request_date_from").val())
+                }
+            }
+        }
         function checkHalfDay() {
             if ($("#request_date_from").val() && $("#request_date_from_period").val()) {
                 $("#number_of_hours_text").val("4 Hours");
