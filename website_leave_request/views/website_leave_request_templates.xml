@@ -135,6 +135,10 @@
                           <textarea id="name" name="name" class="form-control col-sm-7" />
                         </div>
                     </div>
+                    <div class="row mb-3">
+                        <input id="date_from" name="date_from" type="text" />
+                        <input id="date_to" name="date_to" type="text" />
+                    </div>
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <div class="col-12 offset-sm-1 pb-5">
                         <button type="submit" class="btn btn-primary ml-n3">Submit</button>
