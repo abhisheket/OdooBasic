@@ -21,6 +21,9 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
             $("#request_date_from_period").val("");
             $("#request_hour_from").prop('required', false);
             $("#request_hour_to").prop('required', false);
+            $("#request_unit_half").val(false);
+            $("#request_unit_hours").val(false);
+            $("#request_unit_custom").val(true);
             rpc.query ({
                 model: 'hr.leave.type',
                 method: 'search_read' ,
@@ -30,6 +33,7 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 if (request_unit == 'day') {
                     $("#request_unit_half").prop("checked", false);
                     $("#request_unit_hours").prop("checked", false);
+                    $("#request_unit_custom").val(true);
                     $(".leave_checkbox").css("display", "none");
                     $(".custom_hours").css("display", "none");
                     $("#number_of_hours_text").css("display", "none");
@@ -59,6 +63,7 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
         });
         $(".form-check-input").on("change", function() {
             if ($("#request_unit_half").is(':checked') || $("#request_unit_hours").is(':checked')) {
+                $("#request_unit_custom").val(false);
                 $(".from_label").css("display", "none");
                 $(".to_label").css("display", "none");
                 $(".date_to").css("display", "none");
@@ -69,6 +74,7 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 $("#number_of_hours_text").addClass("ml-3");
                 $(".date_to").val("");
             } else {
+                $("#request_unit_custom").val(true);
                 $(".from_label").css("display", "block");
                 $(".to_label").css("display", "block");
                 $(".date_to").css("display", "block");
@@ -88,15 +94,16 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 $("#request_hour_to").val("");
                 $("#request_hour_from").val("");
             }
+            console.log($("#request_unit_custom").val());
         });
         $("#request_unit_half").on("change", function() {
             $(".duration_div").show();
             if ($(this).is(':checked') && $(".custom_hours_checkbox").css("display") == 'none') {
                 $(".duration_div").css("display", "none");
-                $(".date_to").prop('required', false);
             }
             if ($(this).is(':checked')) {
                 $("#request_unit_hours").prop("checked", false);
+                $("#request_unit_hours").val(false);
                 $(".custom_hours").css("display", "none");
                 $("#request_hour_from").prop('required', false);
                 $("#request_hour_to").prop('required', false);
@@ -107,16 +114,19 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 $(".date_from").addClass("col-sm-2");
                 $("#request_hour_to").val("");
                 $("#request_hour_from").val("");
+                $(this).val(true);
             } else {
                 $("#request_date_from_period").css("display", "none");
                 $("#request_date_from_period").val("");
                 $("#request_date_from_period").prop('required', false);
                 $(".date_to").attr('required', true);
+                $(this).val(false);
             }
         });
         $("#request_unit_hours").on("change", function() {
             if ($(this).is(':checked')) {
                 $("#request_unit_half").prop("checked", false);
+                $("#request_unit_half").val(false);
                 $("#request_date_from_period").css("display", "none");
                 $("#request_date_from_period").val("");
                 $("#request_date_from_period").prop('required', false);
@@ -126,16 +136,18 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 $("#request_hour_to").attr('required', true);
                 $(".date_from").removeClass("col-sm-2");
                 $(".date_from").addClass("col-sm-4");
+                $(this).val(true);
             } else {
                 $(".custom_hours").hide();
                 $(".date_to").attr('required', true);
                 $("#request_hour_from").prop('required', false);
                 $("#request_hour_to").prop('required', false);
+                $(this).val(false);
             }
         });
         $("#request_date_from").on("change", function() {
             if ($("#request_hour_from").val() && $("#request_hour_to").val()) {
-                computeDateFromTo();
+                backend_calculation();
             } else if ($("#request_unit_half").is(':checked')) {
                 checkHalfDay();
             } else if (!$("#request_unit_half").is(':checked') && !$("#request_unit_hours").is(':checked')) {
@@ -162,26 +174,23 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 }
             }
         });
-        function computeDateFromTo() {
+        function backend_calculation() {
             ajax.jsonRpc("/leave_requests/new_request_validate", 'call', {
                 'request_date_from_period': $('#request_date_from_period').val(),
                 'request_hour_from': $('#request_hour_from').val(),
                 'request_hour_to': $('#request_hour_to').val(),
                 'request_date_from': $('#request_date_from').val(),
                 'request_date_to': $('#request_date_to').val(),
-                'request_unit_half': false,
-                'request_unit_hours': false,
-                'request_unit_custom': true,
+                'request_unit_half': $('#request_unit_half').val(),
+                'request_unit_hours': $('#request_unit_hours').val(),
+                'request_unit_custom': $('#request_unit_custom').val(),
             }).then(function (data) {
                 if (data) {
                     console.log(data);
-//                    var date_from = new Date(new Date(data['date_from']).getTime() - new Date(data['date_from']).getTimezoneOffset()*60*1000);
+//                    $('#request_date_to').val(data['request_date_to']);
                     $('#date_from').val(data['date_from_disp']);
-//                    var date_to = new Date(new Date(data['date_to']).getTime() - new Date(data['date_to']).getTimezoneOffset()*60*1000);
                     $('#date_to').val(data['date_to_disp']);
                 }
-//                var output_data = data[‘output_data’];
-//                $("#output").html(output_data);
             });
         }
         function checkFromToDate() {
@@ -191,13 +200,13 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 if (date_from > date_to) {
                     $("#request_date_to").val($("#request_date_from").val())
                 }
-                computeDateFromTo();
+                backend_calculation();
             }
         }
         function checkHalfDay() {
             if ($("#request_date_from").val() && $("#request_date_from_period").val()) {
                 $("#number_of_hours_text").val("4 Hours");
-                computeDateFromTo();
+                backend_calculation();
             } else {
                 $("#number_of_hours_text").val("0 Hours");
             }
@@ -208,7 +217,7 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
             if (eval(hour_from + " < " + hour_to)){
                 $("#number_of_hours_text").val(eval(hour_to - hour_from) + " Hours");
                 if ($("#request_date_from").val()) {
-                    computeDateFromTo();
+                    backend_calculation();
                 }
                 return true;
             } else {

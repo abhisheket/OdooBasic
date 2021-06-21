@@ -6,16 +6,17 @@
             <div class="container">
                 <h1>Leave Requests</h1>
                 <a href="/leave_requests/new_request" class="btn btn-primary mb-2">Create</a>
+                <div class="alert alert-success" role="alert" t-if="not leave_records">Currently you don't have any leave requests.</div>
                 <table class="table table-bordered table-info table-hover pb-5" t-if="leave_records">
                     <thead>
                         <tr>
-                            <th>Time Off Type</th>
-                            <th>Description</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
-                            <th>Duration</th>
-                            <th>Status</th>
-                            <th class="delete_request"/>
+                            <th class="w-50">Time Off Type</th>
+                            <th class="w-75 description">Description</th>
+                            <th class="w-25">Start Date</th>
+                            <th class="w-25">End Date</th>
+                            <th class="w-25">Duration</th>
+                            <th class="w-25">Status</th>
+                            <th class="w-25"/>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,7 +42,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="alert alert-success" role="alert" t-if="not leave_records">Currently you don't have any leave requests.</div>
+<!--                alert('You can delete only leave request with status "To Approve"')-->
             </div>
         </t>
     </template>
@@ -73,12 +74,16 @@
                     </div>
                     <div class="row mb-3 leave_checkbox" style="display:none;">
                         <div class="form-check form-check-inline col-sm-2 offset-sm-1">
-                            <input id="request_unit_half" name="request_unit_half" class="form-check-input ml-3" type="checkbox" value="False" />
+                            <input id="request_unit_half" name="request_unit_half" class="form-check-input ml-3" type="checkbox" value="false" />
                             <label class="form-check-label mt-1 request_time" for="request_unit_half">Half Day</label>
                         </div>
                         <div class="form-check form-check-inline col-sm-2 ml-n5 custom_hours_checkbox">
-                            <input id="request_unit_hours" name="request_unit_hours" class="form-check-input" type="checkbox" value="False" />
+                            <input id="request_unit_hours" name="request_unit_hours" class="form-check-input" type="checkbox" value="false" />
                             <label class="form-check-label mt-1 request_time" for="request_unit_hours">Custom Hours</label>
+                        </div>
+                        <div class="form-check form-check-inline col-sm-2 ml-n5" style="display:none;">
+                            <input id="request_unit_custom" name="request_unit_custom" class="form-check-input" type="checkbox" value="true" />
+                            <label class="form-check-label mt-1 request_time" for="request_unit_custom">Custom Unit</label>
                         </div>
                     </div>
                     <div class="row mb-3 ml-1 custom_hours" style="display:none;">
