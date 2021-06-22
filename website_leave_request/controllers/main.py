@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 
 import math
-
 from collections import namedtuple
-
 from datetime import datetime, time, timedelta
 from pytz import timezone, UTC
 
-from odoo import http
+from odoo import http, SUPERUSER_ID
 from odoo.http import request
-from odoo.addons.resource.models.resource import float_to_time, HOURS_PER_DAY
+from odoo.tools import float_compare
 from odoo.tools.float_utils import float_round
 from odoo.tools.translate import _
+from odoo.addons.resource.models.resource import float_to_time, HOURS_PER_DAY
 
 
 class LeaveRequest(http.Controller):
@@ -19,37 +18,30 @@ class LeaveRequest(http.Controller):
     @http.route('/leave_requests', type='http', auth='user', website=True)
     def load_leave_request(self):
         employee_id = request.env['hr.employee'].sudo().search(
-            [('address_home_id', '=', request.env['res.users'].sudo().search(
+            [('user_id.id', '=', request.uid)]).id or request.env[
+                          'hr.employee'].sudo().search(
+            [('address_home_id', '=', request.env[
+                'res.users'].sudo().search(
                 [('id', '=', request.uid)]).partner_id.id)]).id
-        if employee_id:
-            leave_records = request.env['hr.leave'].sudo().search(
-                [('employee_id', '=', employee_id)],
-                order='request_date_from desc')
-        else:
-            leave_records = request.env['hr.leave'].sudo().search(
-                [('user_id.id', '=', request.uid)],
-                order='request_date_from desc')
-
         values = {
-            'leave_records': leave_records,
+            'leave_records': request.env['hr.leave'].sudo().search(
+                [('employee_id', '=', employee_id)],
+                order='request_date_from desc'),
         }
-        return request.render("website_leave_request.leave_requests", values)
+        return request.render("website_leave_request.leave_requests",
+                              values)
 
     @http.route('/leave_requests/new_request', type='http', auth='user',
                 website=True)
     def new_leave_request(self):
-        leave_types = request.env['hr.leave.type'].sudo().search(
-            ['&', ('virtual_remaining_leaves', '>', 0), '|',
-             ('allocation_type', 'in', ['fixed_allocation', 'no']), '&',
-             ('allocation_type', '=', 'fixed'), ('max_leaves', '>', '0')])
-        leave_data = request.env['hr.leave'].sudo().search([])
-        hour_list = list(range(1, 12))
-        user = request.uid
         value = {
-            'user': user,
-            'leave_types': leave_types,
-            'leave_data': leave_data,
-            'hour_list': hour_list,
+            'user': request.uid,
+            'leave_types': request.env['hr.leave.type'].sudo().search(
+                ['&', ('virtual_remaining_leaves', '>', 0), '|',
+                 ('allocation_type', 'in', ['fixed_allocation', 'no']), '&',
+                 ('allocation_type', '=', 'fixed'), ('max_leaves', '>', '0')]),
+            'leave_data': request.env['hr.leave'].sudo().search([]),
+            'hour_list': list(range(1, 12)),
         }
         return request.render("website_leave_request.new_leave_request", value)
 
@@ -76,9 +68,14 @@ class LeaveRequest(http.Controller):
         request_unit_custom = False if kwargs.get(
             'request_unit_custom') == 'false' else True
         employee_id = request.env['hr.employee'].sudo().search(
-                    [('user_id.id', '=', request.uid)])
+            [('user_id.id', '=', request.uid)]) or request.env[
+                          'hr.employee'].sudo().search(
+            [('address_home_id', '=', request.env[
+                'res.users'].sudo().search(
+                [('id', '=', request.uid)]).partner_id.id)])
         number_of_days = 0.0
         number_of_hours = 0
+
         if request_date_from and request_date_to and \
                 request_date_from > request_date_to:
             request_date_to = request_date_from
@@ -90,16 +87,17 @@ class LeaveRequest(http.Controller):
         else:
             if request_unit_half or request_unit_hours:
                 request_date_to = request_date_from
+            company = request.env.company
             resource_calendar_id = employee_id.resource_calendar_id or \
-                                   request.env.company.resource_calendar_id
+                                   company.resource_calendar_id
             domain = [('calendar_id', '=', resource_calendar_id.id),
                       ('display_type', '=', False)]
             attendances = request.env[
-                'resource.calendar.attendance'].read_group(domain, [
-                'ids:array_agg(id)', 'hour_from:min(hour_from)',
-                'hour_to:max(hour_to)', 'week_type', 'dayofweek',
-                'day_period'], ['week_type', 'dayofweek', 'day_period'],
-                                                           lazy=False)
+                'resource.calendar.attendance'].with_user(SUPERUSER_ID).read_group(
+                domain, ['ids:array_agg(id)', 'hour_from:min(hour_from)',
+                         'hour_to:max(hour_to)', 'week_type', 'dayofweek',
+                         'day_period'], ['week_type', 'dayofweek',
+                                         'day_period'], lazy=False)
 
             # Must be sorted by dayofweek ASC and day_period DESC
             attendances = sorted(
@@ -181,42 +179,31 @@ class LeaveRequest(http.Controller):
                     request_date_from, datetime.min.time()).time()
                 hour_to = datetime.combine(
                     request_date_to, datetime.max.time()).time()
-                # hour_from = float_to_time(attendance_from.hour_from)
-                # hour_to = float_to_time(attendance_to.hour_to)
-                print('hour_from', type(hour_from))
-                print('hour_to', hour_to)
-                print(time())
                 user_tz = timezone(
                     request.env.user.tz if request.env.user.tz else 'UTC')
 
                 request_date_from_utc = UTC.localize(datetime.combine(
                     request_date_from, time(0, 0, 0))).astimezone(
                     user_tz).replace(tzinfo=None)
-                print(request_date_from_utc)
                 if request_date_from_utc.date() < request_date_from:
-                    compensated_request_date_from = request_date_from + timedelta(days=1)
-                    print("+++++ from")
+                    compensated_request_date_from = request_date_from + \
+                                                    timedelta(days=1)
                 elif request_date_from_utc.date() > request_date_from:
-                    compensated_request_date_from = request_date_from - timedelta(days=1)
-                    print("------ from")
+                    compensated_request_date_from = request_date_from - \
+                                                    timedelta(days=1)
                 else:
                     compensated_request_date_from = request_date_from
-                    print("same from")
-                print('c-date_from', compensated_request_date_from)
                 request_date_to_utc = UTC.localize(datetime.combine(
                     request_date_to, time(0, 0, 0))).astimezone(
                     user_tz).replace(tzinfo=None)
-                print(request_date_to_utc)
                 if request_date_to_utc.date() < request_date_to:
-                    compensated_request_date_to = request_date_to + timedelta(days=1)
-                    print("+++++ to")
+                    compensated_request_date_to = request_date_to + \
+                                                  timedelta(days=1)
                 elif request_date_to_utc.date() > request_date_to:
-                    compensated_request_date_to = request_date_to - timedelta(days=1)
-                    print("------ to")
+                    compensated_request_date_to = request_date_to - \
+                                                  timedelta(days=1)
                 else:
                     compensated_request_date_to = request_date_to
-                    print("same to")
-                print('c-date_to', compensated_request_date_to)
             else:
                 hour_from = float_to_time(attendance_from.hour_from)
                 hour_to = float_to_time(attendance_to.hour_to)
@@ -230,42 +217,57 @@ class LeaveRequest(http.Controller):
                                  hour_to)).astimezone(UTC).replace(tzinfo=None)
 
             if request_unit_half:
-                print("if", request_unit_half, request_unit_hours,
-                      request_unit_custom)
                 result = employee_id._get_work_days_data_batch(
                     date_from, date_to)[employee_id.id]
                 result['days'] = 0.5
                 number_of_days = result['days']
                 number_of_hours = result['hours']
-            elif request_unit_custom:
-                print("elif", request_unit_half, request_unit_hours,
-                      request_unit_custom)
+            else:
                 company = request.env.company
                 today_hours = company.resource_calendar_id.get_work_hours_count(
                     datetime.combine(date_from.date(), time.min),
                     datetime.combine(date_from.date(), time.max),
                     False)
-                print('today_hours', today_hours)
-                hours = company.resource_calendar_id.get_work_hours_count(
-                    date_from, date_to, False)
-                print('hours', hours)
-                print('HOURS_PER_DAY', HOURS_PER_DAY)
-                days = hours / (today_hours or HOURS_PER_DAY)
-                print('days', days)
-                number_of_days = days
-                number_of_hours = hours
-            else:
-                number_of_days = 0
-                number_of_hours = 0
-            if request_unit_hours or request_unit_half:
-                number_of_hours_text = '%s%g %s%s' % (
-                    '' if request_unit_half or request_unit_hours else '(',
-                    float_round(number_of_hours, precision_digits=2),
-                    _('Hours'),
-                    '' if request_unit_half or request_unit_hours else ')')
-                print(number_of_hours_text)
-            else:
-                number_of_hours_text = ''
+                if request_unit_custom:
+                    hours = company.resource_calendar_id.get_work_hours_count(
+                        date_from, date_to, False)
+                    days = hours / (today_hours or HOURS_PER_DAY)
+                    number_of_days = days
+                    number_of_hours = hours
+                else:
+                    number_of_hours = float(kwargs.get('number_of_hours'))
+                    number_of_days = number_of_hours / 8
+            number_of_hours_text = '%s%g %s%s' % (
+                '' if request_unit_half or request_unit_hours else '(',
+                float_round(number_of_hours, precision_digits=2),
+                _('Hours'),
+                '' if request_unit_half or request_unit_hours else ')')
+
+        hr_leave = request.env['hr.leave'].sudo()
+        # check_date
+        check_data = {}
+        domain = [
+            ('date_from', '<', date_to),
+            ('date_to', '>', date_from),
+            ('employee_id', '=', employee_id.id),
+            ('state', 'not in', ['cancel', 'refuse']),
+        ]
+        number_of_holidays = hr_leave.search_count(domain)
+        if number_of_holidays:
+            check_data = {
+                'checks': "exists",
+            }
+
+        # check_holidays
+        # mapped_days = hr_leave.mapped('holiday_status_id').get_employees_days(
+        #     hr_leave.mapped('employee_id').ids)
+        # holiday_status_id = int(kwargs.get('holiday_status_id'))
+        # leave_days = mapped_days[employee_id.id][holiday_status_id]
+        # if float_compare(leave_days['remaining_leaves'], 0,
+        #                  precision_digits=2) == -1 or \
+        #         float_compare(leave_days['virtual_remaining_leaves'],
+        #                       0, precision_digits=2) == -1:
+        #     print("validation error")
 
         date_data = {
             'date_from': date_from,
@@ -277,38 +279,78 @@ class LeaveRequest(http.Controller):
             'number_of_days': number_of_days,
             'number_of_hours': number_of_hours,
             'number_of_hours_text': number_of_hours_text,
+            'checks': "",
         }
+        date_data.update(check_data)
         return date_data
 
     @http.route('/leave_requests/create_request', type='http', auth='user',
                 website=True)
     def create_leave_request(self, **kwargs):
         employee_id = request.env['hr.employee'].sudo().search(
-            [('user_id.id', '=', request.uid)]).id or \
-                      request.env['hr.employee'].sudo().search(
-                          [('address_home_id', '=',
-                            request.env['res.users'].sudo().search(
-                                [('id', '=', request.uid)]).partner_id.id)]).id
+            [('user_id.id', '=', request.uid)]).id or request.env[
+                          'hr.employee'].sudo().search(
+            [('address_home_id', '=', request.env[
+                'res.users'].sudo().search(
+                [('id', '=', request.uid)]).partner_id.id)]).id
         if employee_id:
             values = {
                 'holiday_status_id': int(kwargs.get('holiday_status_id')),
-                'number_of_days': float(kwargs.get('number_of_days')),
+                'name': kwargs.get('name'),
                 'employee_id': employee_id,
+                'request_date_from': kwargs.get('request_date_from'),
+                'date_from': kwargs.get('date_from'),
+                'date_to': kwargs.get('date_to'),
             }
-            kwargs.update(values)
-            kwargs.pop('number_of_days')
-            print(kwargs)
-            # request.env['hr.leave'].sudo().create(kwargs)
-        return request.redirect('/leave_requests/')
+            if not kwargs.get('request_hour_from') and not kwargs.get(
+                    'request_date_from_period'):
+                custom_day_values = {
+                    'request_date_to': kwargs.get('request_date_to'),
+                    'number_of_days': float(kwargs.get('number_of_days')),
+                }
+                values.update(custom_day_values)
+            elif kwargs.get('request_hour_from') and not kwargs.get(
+                    'request_date_from_period'):
+                custom_hour_values = {
+                    'request_date_to': kwargs.get('request_date_from'),
+                    'request_hour_from': kwargs.get('request_hour_from'),
+                    'request_hour_to': kwargs.get('request_hour_to'),
+                    'number_of_hours_display': float(
+                        kwargs.get('number_of_hours')),
+                }
+                values.update(custom_hour_values)
+            else:
+                half_day_values = {
+                    'request_date_to': kwargs.get('request_date_from'),
+                    'request_date_from_period': kwargs.get(
+                        'request_date_from_period'),
+                    'number_of_hours_display': float(
+                        kwargs.get('number_of_hours')),
+                    'number_of_days': float(kwargs.get('number_of_days')),
+                }
+                values.update(half_day_values)
+            # request.env['hr.leave'].sudo().create(values)
+        return request.redirect('/leave_requests')
 
     @http.route(
         ['/leave_requests/delete_request/<model("hr.leave"):leave_record>'],
         type='http', auth='user', website=True)
     def delete_leave_request(self, leave_record):
+        data = {}
         if leave_record.state == 'confirm':
-            print("deleting...")
-            # request.env['hr.leave'].sudo().search(
-            #     [('id', '=', leave_record.id)]).unlink()
+            cancel_record = request.env['hr.leave'].sudo().search(
+                [('id', '=', leave_record.id)])
+            cancel_record.write({'state': 'cancel'})
+            if cancel_record.state == 'cancel':
+                data = {
+                    'message': 'Leave request cancelled successfully.',
+                    'error_check': 1,
+                }
+            # cancel_record.unlink()
         else:
-            print("error...")
-        return request.redirect('/leave_requests')
+            error = 'You can delete only leave request with status "To Approve"'
+            data = {
+                'message': error,
+                'error_check': 0,
+            }
+        return request.render("website_leave_request.message_page", data)

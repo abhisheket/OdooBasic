@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_my_home" name="Leave Requests" customize_show="True" inherit_id="portal.portal_my_home">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-set="employee_id" t-value="request.env['hr.employee'].sudo().search([('user_id.id', '=', request.uid)]).id or request.env['hr.employee'].sudo().search([('address_home_id', '=', request.env['res.users'].sudo().search([('id', '=', request.uid)]).partner_id.id)]).id"/>
+            <t t-if="employee_id">
+                <t t-call="portal.portal_docs_entry">
+                    <t t-set="title">Leave Requests</t>
+                    <t t-set="url" t-value="'/leave_requests'"/>
+                    <t t-set="placeholder_count" t-value="'leave_count'"/>
+                </t>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

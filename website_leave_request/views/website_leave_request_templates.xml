@@ -52,6 +52,10 @@
             <div class="container">
                 <h1>Leave Requests</h1>
                 <h3 class="col col-md-6 bg-info-light">New</h3>
+                <div id="check_alert" class="alert alert-warning alert-dismissible fade show" role="alert" style="display:none;">
+                    You can not set 2 time off that overlaps on the same day for the same employee.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">x</button>
+                </div>
                 <form role="form" action="/leave_requests/create_request" method="POST">
                     <div class="col-12 mb-3">
                         <select id="holiday_status_id" name="holiday_status_id" class="form-select ml-0 col-sm-6 py-2 mt-3" required="True">
@@ -129,10 +133,11 @@
                     <div class="row mb-3 duration_div">
                         <label for="request_date_from" class="col-sm-1 col-form-label">Duration</label>
                         <div class="col-sm-4 duration duration_days">
-                            <input id="number_of_days" name="number_of_days" class="form-control col-sm-12" type="number" value="0.00"/>
+                            <input id="number_of_days" name="number_of_days" class="form-control col-sm-12" type="number" step="0.01" value="0.00" />
                         </div>
                         <span class="duration_unit duration_days mt-2">Days</span>
                         <input id="number_of_hours_text" name="number_of_hours_text" value="(0 Hours)" disabled="1" />
+                        <input id="number_of_hours" name="number_of_hours" value="0" style="display:none;"/>
                     </div>
                     <div class="row mb-3">
                         <label for="name" class="col-sm-1 col-form-label">Description</label>
@@ -141,8 +146,8 @@
                         </div>
                     </div>
                     <div class="row mb-3">
-                        <input id="date_from" name="date_from" type="text" />
-                        <input id="date_to" name="date_to" type="text" />
+                        <input id="date_from" class="datetime_duration" name="date_from" type="text" style="display:none;"/>
+                        <input id="date_to" class="datetime_duration" name="date_to" type="text" style="display:none;"/>
                     </div>
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                     <div class="col-12 offset-sm-1 pb-5">
@@ -151,6 +156,28 @@
                 </form>
             </div>
         </t>
+    </template>
+
+    <template id="message_page" name="Message Page">
+        <t t-call="website.layout">
+            <div class="container">
+                <t t-if="error_check">
+                    <h1>Success!</h1>
+                    <div class="alert alert-success" role="alert">
+                        <t t-esc="message"/>
+                    </div>
+                </t>
+                <t t-else="">
+                    <h1>Error!</h1>
+                    <div class="alert alert-danger" role="alert">
+                        <t t-esc="message"/>
+                    </div>
+                </t>
+            </div>
+        </t>
+        <script>
+            setTimeout(function(){ window.location.href = '/leave_requests';}, 5000);
+        </script>
     </template>
 
 </odoo>
