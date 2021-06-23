@@ -262,6 +262,15 @@ class LeaveRequest(http.Controller):
         # mapped_days = hr_leave.mapped('holiday_status_id').get_employees_days(
         #     hr_leave.mapped('employee_id').ids)
         # holiday_status_id = int(kwargs.get('holiday_status_id'))
+        # print(request.env['hr.leave.type'].search(
+        #     [('id', '=', holiday_status_id)]))
+        # print(request.env['hr.leave.type'].get_employees_days(
+        #     [employee_id]))
+        # mapped_days = request.env['hr.leave'].mapped(
+        #     'holiday_status_id').get_employees_days(
+        #     request.env['hr.leave'].mapped('employee_id').ids)
+        # print(mapped_days)
+        #
         # leave_days = mapped_days[employee_id.id][holiday_status_id]
         # if float_compare(leave_days['remaining_leaves'], 0,
         #                  precision_digits=2) == -1 or \
@@ -329,8 +338,21 @@ class LeaveRequest(http.Controller):
                     'number_of_days': float(kwargs.get('number_of_days')),
                 }
                 values.update(half_day_values)
+            leave_count = request.env['hr.leave'].sudo().search_count([])
             # request.env['hr.leave'].sudo().create(values)
-        return request.redirect('/leave_requests')
+            leave_count_new = request.env['hr.leave'].sudo().search_count([])
+            if leave_count == leave_count_new:
+                data = {
+                    'message': 'Leave request could not be created!',
+                    'error_check': 0,
+                }
+            else:
+                data = {
+                    'message': 'Leave request created successfully.',
+                    'error_check': 1,
+                }
+        return request.render("website_leave_request.message_page", data)
+        # return request.redirect('/leave_requests')
 
     @http.route(
         ['/leave_requests/delete_request/<model("hr.leave"):leave_record>'],
@@ -340,15 +362,21 @@ class LeaveRequest(http.Controller):
         if leave_record.state == 'confirm':
             cancel_record = request.env['hr.leave'].sudo().search(
                 [('id', '=', leave_record.id)])
-            cancel_record.write({'state': 'cancel'})
+            # cancel_record.write({'state': 'cancel'})
             if cancel_record.state == 'cancel':
                 data = {
                     'message': 'Leave request cancelled successfully.',
                     'error_check': 1,
                 }
+            else:
+                error = '''OOPs! Leave request could not be cancelled!'''
+                data = {
+                    'message': error,
+                    'error_check': 0,
+                }
             # cancel_record.unlink()
         else:
-            error = 'You can delete only leave request with status "To Approve"'
+            error = 'You can cancel only leave request with status "To Approve"'
             data = {
                 'message': error,
                 'error_check': 0,

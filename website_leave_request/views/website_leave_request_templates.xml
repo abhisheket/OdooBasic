@@ -22,7 +22,7 @@
                     <tbody>
                         <tr t-foreach="leave_records" t-as="leave_record">
                             <td t-esc="leave_record.holiday_status_id.name" />
-                            <td t-esc="leave_record.name" />
+                            <td t-esc="leave_record.name or ''" />
                             <td t-esc="leave_record.request_date_from.strftime('%d-%m-%Y')" />
                             <td t-esc="leave_record.request_date_to.strftime('%d-%m-%Y')" />
                             <td t-esc="leave_record.duration_display" />
@@ -42,7 +42,6 @@
                         </tr>
                     </tbody>
                 </table>
-<!--                alert('You can delete only leave request with status "To Approve"')-->
             </div>
         </t>
     </template>
@@ -169,7 +168,7 @@
                 </t>
                 <t t-else="">
                     <h1>Error!</h1>
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-warning" role="alert">
                         <t t-esc="message"/>
                     </div>
                 </t>

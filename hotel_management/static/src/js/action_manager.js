@@ -18,7 +18,6 @@ ActionManager.include({
     },
     _handleAction: function (action, options) {
         if (action.report_type === 'xlsx') {
-            console.log("action_manager: function 2 report type xlsx")
             return this._executexlsxReportDownloadAction(action, options);
         }
         return this._super.apply(this, arguments);

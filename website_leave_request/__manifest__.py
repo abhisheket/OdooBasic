@@ -12,7 +12,6 @@
     """,
     'depends': ['website', 'hr_holidays'],
     'data': [
-        'security/website_leave_request_security.xml',
         'views/website_leave_request_portal_templates.xml',
         'views/website_leave_request_templates.xml',
         'views/assets.xml',
