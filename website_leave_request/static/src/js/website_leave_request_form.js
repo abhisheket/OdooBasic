@@ -6,12 +6,14 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
 
     $(document).ready(function() {
         $("#holiday_status_id").change(function() {
-            if (!$('#request_date_to').val()) {
+            if (!$('#request_date_to').val() && $('#request_date_from').val()) {
                 $("#number_of_days").val(0.00);
                 $("#number_of_hours").val(0);
                 $(".datetime_duration").val("");
+            } else if ($('#request_date_to').val() && $('#request_date_from').val()) {
+                backend_calculation();
             }
-            $("#request_date_from").prop('required', false);
+            $("#request_date_to").prop('required', false);
             $(".date_from").removeClass("col-sm-4");
             $(".date_from").addClass("col-sm-2");
             $(".duration_div").show();
@@ -193,12 +195,16 @@ odoo.define('website_leave_request.website_leave_request_form', function(require
                 'request_unit_hours': $('#request_unit_hours').val(),
                 'request_unit_custom': $('#request_unit_custom').val(),
                 'number_of_hours':$("#number_of_hours").val(),
+                'number_of_hours_text': $('#number_of_hours_text').val(),
             }).then(function (data) {
                 if (data) {
                     if (data['checks'] == "exists") {
-                        $('#check_alert').show();
+                        $('#check_date_alert').show();
+                    } else if (data['checks'] == "over") {
+                        $('#check_holiday_alert').show();
                     } else {
-                        $('#check_alert').hide();
+                        $('#check_date_alert').hide();
+                        $('#check_holiday_alert').hide();
                         $('#date_from').val(data['date_from']);
                         $('#date_to').val(data['date_to']);
                         $('#number_of_days').val(data['number_of_days'].toFixed(2));

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="add_price_range" inherit_id="website_sale.products" active="True" customize_show="True" name="Price Range">
+        <xpath expr="//div[hasclass('products_pager')]/t[@t-call][last()]" position="after">
+            <div class="price_range_div">
+                <span>Price Range</span>
+                <label for="price_min" class="col-sm-1">Min</label>
+                <input id="price_min" name="price_min" type="number" step="0.01" />
+                <label for="price_max" class="col-sm-1">Max</label>
+                <input id="price_max" name="price_max" type="number" step="0.01" />
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
