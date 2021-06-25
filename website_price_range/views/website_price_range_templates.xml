@@ -15,17 +15,18 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="min_label">Min <t t-esc="website.currency_id.symbol" /></span>
                           </div>
-                            <input id="price_min" name="price_min" class="form-control price_input" aria-describedby="min_label" type="number" step="0.01" />
+                            <input id="price_min" name="price_min" class="form-control price_input" aria-describedby="min_label" type="number" step="0.01" t-att-value="price_min"/>
                         </div>
                         <div class="input-group mb-2">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="max_label">Max <t t-esc="website.currency_id.symbol" /></span>
                             </div>
-                            <input id="price_max" name="price_max" class="form-control price_input" aria-describedby="max_label" type="number" step="0.01" />
+                            <input id="price_max" name="price_max" class="form-control price_input" aria-describedby="max_label" type="number" step="0.01" t-att-value="price_max"/>
                         </div>
                         <div class="mb-1">
                             <button type="submit" class="btn btn-primary float-right">Apply</button>
                         </div>
+                        <input id="sort_by" name="order" type="text" t-att-value="order" style="display:none;" />
                     </div>
                 </div>
             </form>
