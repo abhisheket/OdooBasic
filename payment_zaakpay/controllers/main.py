@@ -15,17 +15,24 @@ _logger = logging.getLogger(__name__)
 class ZaakpayController(http.Controller):
     _return_url = '/payment/zaakpay/return'
 
-    @http.route(['/shop/payment/zaakpay'], type='http', auth='none',
-                method='POST', csrf=None, website=True)
-    def zaakpay_checkout(self, **post):
-        print(post)
-        url = 'https://sandbox.zaakpay.com/transactU?v=8' + \
-              '&merchantIdentifier=' + post.get('merchantIdentifier') + \
-              '&orderId=' + post.get('orderId') + '&mode=' +\
-              post.get('mode') + '&checksum=' + post.get('checksum')
-        print(url)
-        # response = requests.post(url, data=post, headers=header)
-        # print("Test : ", response.text)
+    # @http.route(['/shop/payment'], type='http', auth='none',
+    #             method='POST', csrf=None, website=True)
+    # def zaakpay_checkout(self):
+    #
+    #     url = 'https://sandbox.zaakpay.com/transactU?v=8' + \
+    #           '&merchantIdentifier=' + post.get('merchantIdentifier') + \
+    #           '&amount=' + post.get('amount') + \
+    #           '&orderId=' + post.get('orderId') + '&mode=' +\
+    #           post.get('mode') + '&checksum=' + post.get('checksum')
+    #     print(url)
+        # headers = {
+        #     'merchantIdentifier': post.get('merchantIdentifier'),
+        #     'orderId': post.get('orderId'),
+        #     'mode': post.get('mode'),
+        #     'checksum': post.get('checksum'),
+        # }
+        # response = requests.post(url)
+        # print("Response", response)
 
     @http.route(['/payment/zaakpay/return'], type='http', auth='public',
                 methods=['POST', 'GET'], csrf=False)

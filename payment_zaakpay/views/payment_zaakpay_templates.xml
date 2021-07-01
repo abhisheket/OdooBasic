@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
-        <template id="zaakpay_form">
-            <input type="hidden" name="data_set" t-att-data-action-url="tx_url" data-remove-me=""/>
-            <input type="hidden" name="merchantIdentifier" t-att-value='merchantIdentifier' />
-            <input type="hidden" name="orderId" t-att-value='orderId' />
-            <input type="hidden" name="returnUrl" t-att-value='returnUrl' />
-            <input type="hidden" name="buyerEmail" t-att-value='buyerEmail' />
-            <input type="hidden" name="buyerFirstName" t-att-value='buyerFirstName' />
-            <input type="hidden" name="buyerLastName" t-att-value='buyerLastName' />
-            <input type="hidden" name="buyerAddress" t-att-value='buyerAddress' />
-            <input type="hidden" name="buyerCity" t-att-value='buyerCity' />
-            <input type="hidden" name="buyerState" t-att-value='buyerState' />
-            <input type="hidden" name="buyerPincode" t-att-value='buyerPincode' />
-            <input type="hidden" name="buyerPhoneNumber" t-att-value='buyerPhoneNumber' />
-            <input type="hidden" name="txnType" t-att-value='txnType' />
-            <input type="hidden" name="zpPayOption" t-att-value='zpPayOption' />
-            <input type="hidden" name="mode" t-att-value='mode' />
-            <input type="hidden" name="currency" t-att-value='currency' />
-            <input type="hidden" name="amount" t-att-value='amount' />
-            <input type="hidden" name="merchantIpAddress" t-att-value='merchantIpAddress' />
-            <input type="hidden" name="txnDate" t-att-value='txnDate' />
-            <input type="hidden" name="purpose" t-att-value='purpose' />
-            <input type="hidden" name="productDescription" t-att-value='productDescription' />
-            <input type="hidden" name="debitorcredit" t-att-value='debitorcredit' />
-            <input type="hidden" name="bankid" t-att-value='bankid' />
-            <input type="hidden" name="encrypted_pan" t-att-value='encrypted_pan' />
-            <input type="hidden" name="nameoncard" t-att-value='nameoncard' />
-            <input type="hidden" name="encryptedcvv" t-att-value='encryptedcvv' />
-            <input type="hidden" name="encrypted_expiry_month" t-att-value='encrypted_expiry_month' />
-            <input type="hidden" name="encrypted_expiry_year" t-att-value='encrypted_expiry_year' />
-            <input type="hidden" name="checksum" t-att-value='checksum' />
-        </template>
-    </data>
+    <template id="zaakpay_form">
+        <input type="hidden" name="data_set" t-att-data-action-url="tx_url" data-remove-me=""/>
+        <input type="hidden" name="merchantIdentifier" t-att-value='merchantIdentifier' />
+        <input type="hidden" name="orderId" t-att-value='orderId' />
+        <input type="hidden" name="returnUrl" t-att-value='returnUrl' />
+        <input type="hidden" name="buyerEmail" t-att-value='buyerEmail' />
+        <input type="hidden" name="buyerFirstName" t-att-value='buyerFirstName' />
+        <input type="hidden" name="buyerLastName" t-att-value='buyerLastName' />
+        <input type="hidden" name="buyerAddress" t-att-value='buyerAddress' />
+        <input type="hidden" name="buyerCity" t-att-value='buyerCity' />
+        <input type="hidden" name="buyerState" t-att-value='buyerState' />
+        <input type="hidden" name="buyerCountry" t-att-value='buyerCountry' />
+        <input type="hidden" name="buyerPincode" t-att-value='buyerPincode' />
+        <input type="hidden" name="buyerPhoneNumber" t-att-value='buyerPhoneNumber' />
+        <input type="hidden" name="txnType" t-att-value='txnType' />
+        <input type="hidden" name="zpPayOption" t-att-value='zpPayOption' />
+        <input type="hidden" name="mode" t-att-value='mode' />
+        <input type="hidden" name="currency" t-att-value='currency' />
+        <input type="hidden" name="amount" t-att-value='amount' />
+        <input type="hidden" name="merchantIpAddress" t-att-value='merchantIpAddress' />
+        <input type="hidden" name="txnDate" t-att-value='txnDate' />
+        <input type="hidden" name="purpose" t-att-value='purpose' />
+        <input type="hidden" name="productDescription" t-att-value='productDescription' />
+        <input type="hidden" name="debitorcredit" t-att-value='debitorcredit' />
+        <input type="hidden" name="bankid" t-att-value='bankid' />
+        <input type="hidden" name="encrypted_pan" t-att-value='encrypted_pan' />
+        <input type="hidden" name="nameoncard" t-att-value='nameoncard' />
+        <input type="hidden" name="encryptedcvv" t-att-value='encryptedcvv' />
+        <input type="hidden" name="encrypted_expiry_month" t-att-value='encrypted_expiry_month' />
+        <input type="hidden" name="encrypted_expiry_year" t-att-value='encrypted_expiry_year' />
+        <input type="hidden" name="checksum" t-att-value='checksum' />
+    </template>
 </odoo>

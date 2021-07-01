@@ -13,6 +13,8 @@
             <field name="state">test</field>
             <field name="zaakpay_merchant_id">demo</field>
             <field name="zaakpay_secret_key">demo</field>
+            <field name="zaakpay_encryption_key_id">demo</field>
+            <field name="zaakpay_public_key">demo</field>
             <field name="description" type="html">
                 <p>
                     A payment gateway to accept online payments via credit cards, debit cards and bank transfers.
