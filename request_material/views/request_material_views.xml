@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Material Request form view -->
+    <record id="material_request_view_form" model="ir.ui.view">
+        <field name="name">material.request.form</field>
+        <field name="model">material.request</field>
+        <field name="arch" type="xml">
+            <form string="Material Request Form">
+                <!-- Status bar with buttons and states -->
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="oe_highlight" states="draft" />
+                    <button name="action_approve" type="object" string="Approve" class="oe_highlight" states="confirm" />
+<!--                     attrs="{'invisible': [('','!=',user)]}"-->
+                    <button name="action_cancel" type="object" string="Cancel" states="draft,confirm"/>
+                    <button name="action_validate" type="object" string="Validate" class="oe_highlight" states="validate1" groups="request_material.group_requisition_head" />
+                    <button name="action_reject" type="object" string="Reject" states="validate1" groups="request_material.group_requisition_head" />
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate1,validate" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="user_id" />
+                            <field name="request_date" />
+                        </group>
+                        <group>
+                            <field name="department_id" />
+                            <field name="manager_id" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Material List">
+                            <!-- Material list tree view -->
+                            <field name="material_list_ids" groups="stock.group_stock_multi_locations" attrs="{'readonly': [('state', '!=', 'draft')]}">
+                                <tree string="Material List" editable="bottom">
+                                    <field name="company_id" invisible="1"/>
+                                    <field name="product_id" />
+                                    <field name="product_qty" />
+                                    <field name="acquire_method" />
+                                    <field name="source_id" options="{'no_create': True}" attrs="{'invisible': [('acquire_method', '=', 'po')]}"/>
+                                    <field name="destination_id" options="{'no_create': True}" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Material Request tree view -->
+    <record id="material_request_view_list" model="ir.ui.view">
+        <field name="name">material.request.list</field>
+        <field name="model">material.request</field>
+        <field name="arch" type="xml">
+            <tree string="Material Request List">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="request_date"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+    <!-- My Material Request window action -->
+    <record id="material_request_action" model="ir.actions.act_window">
+        <field name="name">My Material Requests</field>
+        <field name="res_model">material.request</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('user_id','=', uid)]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create new material request</p>
+        </field>
+    </record>
+    <!-- All Material Request window action -->
+    <record id="material_request_all_action" model="ir.actions.act_window">
+        <field name="name">All Material Requests</field>
+        <field name="res_model">material.request</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <!-- Main menu -->
+    <menuitem id="material_request_menu_root" name="Material Request" />
+    <!-- Material Request sub-menu -->
+    <menuitem id="material_request_menu" name="My Requests" parent="material_request_menu_root" action="material_request_action" groups="request_material.group_requisition_user" />
+    <menuitem id="material_request_all_menu" name="All Requests" parent="material_request_menu_root" action="material_request_all_action" />
+</odoo>
