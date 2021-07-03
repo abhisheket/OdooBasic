@@ -14,12 +14,17 @@ class MaterialRequest(models.Model):
                               default=lambda self: self.env.uid, readonly=True)
     request_date = fields.Datetime(string="Date", readonly=True, copy=False,
                                    help="Date of Request")
-    department_id = fields.Many2one('hr.department', string='Department',
-                                    compute='_compute_department_id',
-                                    readonly=True, store=True)
-    manager_id = fields.Many2one('hr.employee', string='Manager',
-                                 compute='_compute_manager_id', readonly=True,
-                                 store=True, help="Department Manager")
+    manager_id = fields.Many2one(
+        'res.users', string='Manager', readonly=True, store=True,
+        compute='_compute_manager_id', help="Requisition Department Manager",
+        default=lambda self: (self.env['res.groups'].search(
+                [('name', 'ilike',
+                  'Requisition Department Manager')]).users).ids[0])
+    head_id = fields.Many2one(
+        'res.users', string='Head', compute='_compute_head_id', readonly=True,
+        default=lambda self: (self.env['res.groups'].search(
+                [('name', 'ilike', 'Requisition Head')]).users).ids[0],
+        store=True, help="Requisition Head")
     material_list_ids = fields.One2many('material.list', 'material_list_id',
                                         string='Material list')
     state = fields.Selection(
@@ -37,23 +42,6 @@ class MaterialRequest(models.Model):
         return result
 
     @api.depends('user_id')
-    def _compute_manager_id(self):
-        for record in self:
-            employee_id = record.env['hr.employee'].search(
-                [('user_id.id', '=', record.user_id.id)])
-            if employee_id.id:
-                record.manager_id = record.env['hr.department'].search(
-                    [('id', '=', employee_id.department_id.id)]).manager_id
-
-    @api.depends('user_id')
-    def _compute_department_id(self):
-        for record in self:
-            employee_id = record.env['hr.employee'].search(
-                [('user_id.id', '=', record.user_id.id)])
-            if employee_id.id:
-                record.department_id = record.env['hr.department'].search(
-                    [('id', '=', employee_id.department_id.id)])
-
     def action_submit(self):
         self.state = "confirm"
         self.request_date = fields.Datetime.now()
@@ -69,7 +57,12 @@ class MaterialRequest(models.Model):
         self.state = "validate1"
 
     def action_validate(self):
-        self.state = "validate"
+        # self.state = "validate"
+        print("validating")
+        print(self.env['stock.picking.type'].search([('name', 'ilike', 'Internal Transfer')]).name)
+        for record in self.material_list_ids:
+            if record.acquire_method == 'int':
+                print("creating int")
 
     def action_reject(self):
         self.state = "reject"
@@ -92,9 +85,23 @@ class MaterialList(models.Model):
                                  default=lambda self: self.env.company)
     source_id = fields.Many2one(
         'stock.location', string='Source', check_company=True,
-        domain=lambda self: self._domain_location_id(), help="Source Location")
+        domain="[('usage','=','internal'), '|', ('company_id', '=', False),"
+               "('company_id', '=', company_id)]", help="Source Location")
     destination_id = fields.Many2one(
         'stock.location', string='Destination', check_company=True,
         domain="[('usage','=','internal'), '|', ('company_id', '=', False),"
-               "('company_id', '=', company_id)]",help="Destination Location")
+               "('company_id', '=', company_id)]", help="Destination Location")
 
+    @api.onchange('product_id', 'acquire_method')
+    def _onchange_product_id(self):
+        if self.product_id and self.acquire_method == 'int':
+            stock_quant = self.env['stock.quant'].search(
+                [('product_id', '=', self.product_id.id)])
+            source_location_domain = []
+            for record in stock_quant:
+                if record.location_id.usage == 'internal' and \
+                        (record.location_id.company_id.id == self.company_id.id
+                         or not record.location_id.company_id.id):
+                    source_location_domain.append(record.location_id.id)
+            return {'domain': {
+                'source_id': [('id', 'in', source_location_domain)]}}

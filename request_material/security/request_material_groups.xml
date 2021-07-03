@@ -9,11 +9,11 @@
             <field name="name">Requisition User</field>
             <field name="category_id" ref="module_category_request_material"/>
         </record>
-        <record id="group__requisition_manager" model="res.groups">
+        <record id="group_requisition_manager" model="res.groups">
             <field name="name">Requisition Department Manager</field>
             <field name="category_id" ref="module_category_request_material"/>
         </record>
-        <record id="group__requisition_head" model="res.groups">
+        <record id="group_requisition_head" model="res.groups">
             <field name="name">Requisition Head</field>
             <field name="category_id" ref="module_category_request_material"/>
         </record>

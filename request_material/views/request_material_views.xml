@@ -9,12 +9,13 @@
                 <!-- Status bar with buttons and states -->
                 <header>
                     <button name="action_submit" type="object" string="Submit" class="oe_highlight" states="draft" />
-                    <button name="action_approve" type="object" string="Approve" class="oe_highlight" states="confirm" />
-<!--                     attrs="{'invisible': [('','!=',user)]}"-->
-                    <button name="action_cancel" type="object" string="Cancel" states="draft,confirm"/>
-                    <button name="action_validate" type="object" string="Validate" class="oe_highlight" states="validate1" groups="request_material.group_requisition_head" />
+                    <button name="action_approve" type="object" string="Approve" class="oe_highlight" states="confirm"
+                            groups="request_material.group_requisition_manager" />
+                    <button name="action_cancel" type="object" string="Cancel" states="draft,confirm" />
+                    <button name="action_validate" type="object" string="Validate" class="oe_highlight" states="validate1"
+                            groups="request_material.group_requisition_head" />
                     <button name="action_reject" type="object" string="Reject" states="validate1" groups="request_material.group_requisition_head" />
-                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" />
+                    <button name="action_reset_to_draft" type="object" string="Reset to Draft" states="confirm" />
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirm,validate1,validate" />
                 </header>
                 <sheet>
@@ -29,8 +30,8 @@
                             <field name="request_date" />
                         </group>
                         <group>
-                            <field name="department_id" />
                             <field name="manager_id" />
+                            <field name="head_id" />
                         </group>
                     </group>
                     <notebook>
@@ -42,8 +43,8 @@
                                     <field name="product_id" />
                                     <field name="product_qty" />
                                     <field name="acquire_method" />
-                                    <field name="source_id" options="{'no_create': True}" attrs="{'invisible': [('acquire_method', '=', 'po')]}"/>
-                                    <field name="destination_id" options="{'no_create': True}" />
+                                    <field name="source_id" options="{'no_create': True}" attrs="{'readonly': [('acquire_method', '!=', 'int')], 'required' :[(('acquire_method','=','int'))]}" />
+                                    <field name="destination_id" options="{'no_create': True}" attrs="{'readonly': [('acquire_method', '!=', 'int')], 'required' :[(('acquire_method','=','int'))]}" />
                                 </tree>
                             </field>
                         </page>
@@ -65,7 +66,7 @@
             </tree>
         </field>
     </record>
-    <!-- My Material Request window action -->
+    <!-- My Material Requests window action -->
     <record id="material_request_action" model="ir.actions.act_window">
         <field name="name">My Material Requests</field>
         <field name="res_model">material.request</field>
@@ -75,15 +76,18 @@
             <p class="o_view_nocontent_smiling_face">Create new material request</p>
         </field>
     </record>
-    <!-- All Material Request window action -->
+    <!-- All Material Requests window action -->
     <record id="material_request_all_action" model="ir.actions.act_window">
         <field name="name">All Material Requests</field>
         <field name="res_model">material.request</field>
         <field name="view_mode">tree,form</field>
+        <field name="domain">[('state','!=', 'draft')]</field>
     </record>
     <!-- Main menu -->
     <menuitem id="material_request_menu_root" name="Material Request" />
     <!-- Material Request sub-menu -->
-    <menuitem id="material_request_menu" name="My Requests" parent="material_request_menu_root" action="material_request_action" groups="request_material.group_requisition_user" />
-    <menuitem id="material_request_all_menu" name="All Requests" parent="material_request_menu_root" action="material_request_all_action" />
+    <menuitem id="material_request_menu" name="My Requests" parent="material_request_menu_root" action="material_request_action"
+              groups="request_material.group_requisition_user,request_material.group_requisition_head,request_material.group_requisition_manager" />
+    <menuitem id="material_request_all_menu" name="All Requests" parent="material_request_menu_root" action="material_request_all_action"
+              groups="request_material.group_requisition_head,request_material.group_requisition_manager" />
 </odoo>
