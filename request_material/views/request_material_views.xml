@@ -26,25 +26,30 @@
                     </div>
                     <group>
                         <group>
-                            <field name="user_id" />
+                            <field name="user_id"  string="Requester" />
+                            <field name="operation_type" />
                             <field name="request_date" />
                         </group>
                         <group>
-                            <field name="manager_id" />
-                            <field name="head_id" />
+                            <field name="manager_id" options="{'no_create_edit': True, 'no_create': True}" />
+                            <field name="head_id" options="{'no_create_edit': True, 'no_create': True}" />
                         </group>
                     </group>
                     <notebook>
                         <page string="Material List">
                             <!-- Material list tree view -->
-                            <field name="material_list_ids" groups="stock.group_stock_multi_locations" attrs="{'readonly': [('state', '!=', 'draft')]}">
+                            <field name="material_list_ids" groups="stock.group_stock_multi_locations" context="{'operation_type': operation_type}" attrs="{'readonly': [('state', '!=', 'draft')]}">
                                 <tree string="Material List" editable="bottom">
-                                    <field name="company_id" invisible="1"/>
-                                    <field name="product_id" />
-                                    <field name="product_qty" />
-                                    <field name="acquire_method" />
-                                    <field name="source_id" options="{'no_create': True}" attrs="{'readonly': [('acquire_method', '!=', 'int')], 'required' :[(('acquire_method','=','int'))]}" />
-                                    <field name="destination_id" options="{'no_create': True}" attrs="{'readonly': [('acquire_method', '!=', 'int')], 'required' :[(('acquire_method','=','int'))]}" />
+                                    <field name="company_id" string="Company" invisible="1" />
+                                    <field name="partner_ids" string="Vendors"  invisible="1" />
+                                    <field name="product_uom_category_id" string="UoM Category"  invisible="1" />
+                                    <field name="product_id" string="Product" />
+                                    <field name="location_id" string="Source" options="{'no_create': True, 'no_create_edit': True}"
+                                           attrs="{'column_invisible': [('parent.operation_type', '!=', 'internal')], 'required' :[(('parent.operation_type','=','internal'))]}" />
+                                    <field name="location_dest_id" string="Destination" options="{'no_create': True, 'no_create_edit': True}"
+                                           attrs="{'column_invisible': [('parent.operation_type', '!=', 'internal')], 'required' :[(('parent.operation_type','=','internal'))]}" />
+                                    <field name="product_qty" string="Quantity" />
+                                    <field name="uom_id" string="UoM" readonly="0" />
                                 </tree>
                             </field>
                         </page>
@@ -81,7 +86,7 @@
         <field name="name">All Material Requests</field>
         <field name="res_model">material.request</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('state','!=', 'draft')]</field>
+        <field name="domain">[('state','not in', ['draft', 'cancel'])]</field>
     </record>
     <!-- Main menu -->
     <menuitem id="material_request_menu_root" name="Material Request" />
