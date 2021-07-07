@@ -10,8 +10,8 @@
                 <group attrs="{'invisible': [('provider', '!=', 'zaakpay')]}">
                     <field name="zaakpay_merchant_id" attrs="{'required':[('provider', '=', 'zaakpay'), ('state', '!=', 'disabled')]}"/>
                     <field name="zaakpay_secret_key" attrs="{'required':[('provider', '=', 'zaakpay'), ('state', '!=', 'disabled')]}"/>
-                    <field name="zaakpay_encryption_key_id" attrs="{'required':[('provider', '=', 'zaakpay'), ('state', '!=', 'disabled')]}"/>
-                    <field name="zaakpay_public_key" attrs="{'required':[('provider', '=', 'zaakpay'), ('state', '!=', 'disabled')]}"/>
+<!--                    <field name="zaakpay_encryption_key_id" attrs="{'required':[('provider', '=', 'zaakpay'), ('state', '!=', 'disabled')]}"/>-->
+<!--                    <field name="zaakpay_public_key" attrs="{'required':[('provider', '=', 'zaakpay'), ('state', '!=', 'disabled')]}"/>-->
                     <a colspan="2" href="https://zaakpay.com/" target="_blank">How to configure your Zaakpay account?</a>
                 </group>
             </xpath>
